@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <DefineConstants>$(DefineConstants)</DefineConstants>
     <DefineConstants>$(DefineConstants);NO_APPDOMAIN;NO_CONFIGURATION;NETCORE</DefineConstants>
   </PropertyGroup>
@@ -34,12 +34,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="3.1.0" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.2.0" Condition="'$(TargetFramework)' != 'netcoreapp3.1'" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Runtime" Version="2.2.0" Condition="'$(TargetFramework)' != 'netcoreapp3.1'" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="2.2.0" Condition="'$(TargetFramework)' != 'netcoreapp3.1'" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="5.0.10" Condition="'$(TargetFramework)' != 'netcoreapp3.1'" />
 
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
+    <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
   </ItemGroup>
 
   <!-- Exclude components that use System.Configuration -->
