@@ -1,5 +1,7 @@
 ﻿using RazorEngine.Compilation;
 using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -108,6 +110,18 @@ However you can just use 'dynamic' (modelType == null) and we try to make it wor
         public void Dispose()
         {
             _origin.Dispose();
+        }
+
+        public async Task RunCompileAsync(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null)
+        {
+            CheckModelType(modelType);
+            await _origin.RunCompileAsync(key, writer, modelType, GetDynamicModel(modelType, model, _allowMissingPropertiesOnDynamic), viewBag);
+        }
+
+        public async Task RunAsync(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null)
+        {
+            CheckModelType(modelType);
+            await _origin.RunAsync(key, writer, modelType, GetDynamicModel(modelType, model, _allowMissingPropertiesOnDynamic), viewBag);
         }
     }
 }

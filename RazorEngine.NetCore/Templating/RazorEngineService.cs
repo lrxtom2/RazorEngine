@@ -1,8 +1,10 @@
 ﻿using RazorEngine.Configuration;
 using RazorEngine.Text;
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -10,11 +12,7 @@ namespace RazorEngine.Templating
     /// Defines a template service and the main API for running templates.
     /// Implements the <see cref="IRazorEngineService"/> interface.
     /// </summary>
-    public class RazorEngineService :
-#if !NO_APPDOMAIN
-        CrossAppDomainObject,
-#endif
-        IRazorEngineService
+    public class RazorEngineService : IRazorEngineService
     {
         #region Fields
 
@@ -221,9 +219,7 @@ namespace RazorEngine.Templating
         /// <returns></returns>
         internal ICompiledTemplate GetCompiledTemplate(ITemplateKey key, Type modelType, bool compileOnCacheMiss)
         {
-            ICompiledTemplate template;
-
-            if (!_config.CachingProvider.TryRetrieveTemplate(key, modelType, out template))
+            if (!_config.CachingProvider.TryRetrieveTemplate(key, modelType, out ICompiledTemplate template))
             {
                 if (compileOnCacheMiss)
                 {
@@ -301,6 +297,34 @@ namespace RazorEngine.Templating
         public ITemplateKey GetKey(string cacheName, ResolveType resolveType = ResolveType.Global, ITemplateKey context = null)
         {
             return _core_with_cache.GetKey(cacheName, resolveType, context);
+        }
+
+        public async Task RunCompileAsync(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null)
+        {
+            var template = GetCompiledTemplate(key, modelType, false);
+
+            try
+            {
+                await _core_with_cache.RunTemplate(template, writer, model, viewBag);
+            }
+            catch (AggregateException ex)
+            {
+                ExceptionDispatchInfo.Capture(ex.Flatten().InnerExceptions.First()).Throw();
+            }
+        }
+
+        public async Task RunAsync(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null)
+        {
+            var template = GetCompiledTemplate(key, modelType, false);
+
+            try
+            {
+                await _core_with_cache.RunTemplate(template, writer, model, viewBag);
+            }
+            catch (AggregateException ex)
+            {
+                ExceptionDispatchInfo.Capture(ex.Flatten().InnerExceptions.First()).Throw();
+            }
         }
 
         #endregion Methods

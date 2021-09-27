@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Defines the required contract for implementing a template service.
@@ -54,6 +55,18 @@
         void RunCompile(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null);
 
         /// <summary>
+        /// Runs the given cached template async.
+        /// When the cache does not contain the template
+        /// it will be compiled and cached beforehand.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="writer"></param>
+        /// <param name="modelType"></param>
+        /// <param name="model"></param>
+        /// <param name="viewBag"></param>
+        Task RunCompileAsync(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null);
+
+        /// <summary>
         /// Runs the given cached template.
         /// </summary>
         /// <param name="key"></param>
@@ -62,5 +75,15 @@
         /// <param name="model"></param>
         /// <param name="viewBag"></param>
         void Run(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null);
+
+        /// <summary>
+        /// Runs the given cached template async.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="writer"></param>
+        /// <param name="modelType"></param>
+        /// <param name="model"></param>
+        /// <param name="viewBag"></param>
+        Task RunAsync(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null);
     }
 }
