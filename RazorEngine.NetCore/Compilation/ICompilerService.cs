@@ -1,11 +1,8 @@
 ﻿namespace RazorEngine.Compilation
 {
+    using RazorEngine.Compilation.ReferenceResolver;
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
-
-    using Inspectors;
-    using RazorEngine.Compilation.ReferenceResolver;
     using System.Security;
 
     /// <summary>
@@ -14,19 +11,12 @@
     public interface ICompilerService : IDisposable
     {
         #region Properties
-#if !RAZOR4
-        /// <summary>
-        /// Gets or sets the set of code inspectors.
-        /// </summary>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        IEnumerable<ICodeInspector> CodeInspectors { get; set; }
-#endif
 
         /// <summary>
         /// Gets or sets the reference resolver.
         /// </summary>
         IReferenceResolver ReferenceResolver { get; set; }
-        
+
         /// <summary>
         /// Gets or sets whether the compiler service is operating in debug mode.
         /// </summary>
@@ -38,9 +28,10 @@
         /// </summary>
         bool DisableTempFileLocking { get; set; }
 
-        #endregion
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Compiles the type defined in the specified type context.
         /// </summary>
@@ -54,6 +45,7 @@
         /// </summary>
         /// <returns>The set of assemblies.</returns>
         IEnumerable<string> IncludeAssemblies();
-        #endregion
+
+        #endregion Methods
     }
 }

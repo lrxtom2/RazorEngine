@@ -6,6 +6,7 @@
     public class HtmlEncodedStringFactory : IEncodedStringFactory
     {
         #region Methods
+
         /// <summary>
         /// Creates a <see cref="IEncodedString"/> instance for the specified raw string.
         /// </summary>
@@ -32,6 +33,7 @@
 
             return new HtmlEncodedString(value.ToString());
         }
-        #endregion
+
+        #endregion Methods
     }
 }

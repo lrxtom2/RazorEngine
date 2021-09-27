@@ -1,12 +1,12 @@
-﻿// 
+﻿//
 //  Copyright 2011 Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,16 +14,12 @@
 //    limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 {
     internal class BinderHash
     {
-
-
         protected BinderHash(Type delegateType, String_OR_InvokeMemberName name, Type context, string[] argNames, Type binderType, bool staticContext, bool isEvent, bool knownBinder)
         {
             KnownBinder = knownBinder;
@@ -34,10 +30,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             Context = context;
             ArgNames = argNames;
             IsEvent = isEvent;
-
         }
-
-
 
         public static BinderHash Create(Type delType, String_OR_InvokeMemberName name, Type context, string[] argNames, Type binderType, bool staticContext, bool isEvent, bool knownBinder)
         {
@@ -70,13 +63,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 && Equals(other.DelegateType, DelegateType)
                 && Equals(other.Name, Name)
                 && (tArgNames == null
-                // ReSharper disable AssignNullToNotNullAttribute
-                //Exclusive Or Makes Sure this doesn't happen
+                                 // ReSharper disable AssignNullToNotNullAttribute
+                                 //Exclusive Or Makes Sure this doesn't happen
 
                                  || tOtherArgNames.SequenceEqual(tArgNames));
             // ReSharper restore AssignNullToNotNullAttribute
         }
-
 
         public override bool Equals(object obj)
         {
@@ -112,7 +104,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
     internal class BinderHash<T> : GenericBinderHashBase where T : class
     {
-
         public static BinderHash<T> Create(String_OR_InvokeMemberName name, Type context, string[] argNames, Type binderType, bool staticContext, bool isEvent, bool knownBinder)
         {
             return new BinderHash<T>(name, context, argNames, binderType, staticContext, isEvent, knownBinder);
@@ -122,7 +113,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             : base(typeof(T), name, context, argNames, binderType, staticContext, isEvent, knownBinder)
         {
         }
-
 
         public override bool Equals(BinderHash other)
         {
@@ -138,8 +128,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                            && Equals(other.Context, Context)
                            && Equals(other.Name, Name)
                            && (ArgNames == null
-                        // ReSharper disable AssignNullToNotNullAttribute
-                        //Exclusive Or Makes Sure this doesn't happen
+                                 // ReSharper disable AssignNullToNotNullAttribute
+                                 //Exclusive Or Makes Sure this doesn't happen
                                  || other.ArgNames.SequenceEqual(ArgNames));
                     // ReSharper restore AssignNullToNotNullAttribute
                 }

@@ -1,9 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security;
 using System.Security.Permissions;
 
@@ -15,14 +11,17 @@ namespace RazorEngine.Compilation
     public class CompilationData : IDisposable
     {
         private bool _disposed;
+
         /// <summary>
         /// The temporary folder for the compilation process
         /// </summary>
         private string tmpFolder;
+
         /// <summary>
         /// The generated source code for the template.
         /// </summary>
         private string srcCode;
+
         /// <summary>
         /// Creates a new CompilationData instance.
         /// </summary>
@@ -108,7 +107,6 @@ namespace RazorEngine.Compilation
                 catch (UnauthorizedAccessException)
                 {
                 }
-
             }
         }
 

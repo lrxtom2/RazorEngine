@@ -9,10 +9,13 @@
     internal class DelegateActivator : IActivator
     {
         #region Fields
+
         private readonly Func<InstanceContext, ITemplate> _activator;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="DelegateActivator"/>.
         /// </summary>
@@ -23,16 +26,20 @@
 
             _activator = activator;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets the activator.
         /// </summary>
         internal Func<InstanceContext, ITemplate> Activator { get { return _activator; } }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Creates an instance of the specifed template.
         /// </summary>
@@ -43,6 +50,7 @@
         {
             return _activator(context);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

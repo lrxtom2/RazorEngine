@@ -33,6 +33,7 @@ namespace RazorEngine
         /// The position.
         /// </summary>
         public int Position { get; private set; }
+
         /// <summary>
         /// The value.
         /// </summary>

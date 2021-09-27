@@ -1,35 +1,30 @@
-﻿// 
+﻿//
 //  Copyright 2011 Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+//using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
+using Microsoft.CSharp.RuntimeBinder;
+using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-//using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
-using Microsoft.CSharp;
-using Microsoft.CSharp.RuntimeBinder;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using System.Security;
+
 namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
 {
-
-
-
     /// <summary>
     /// Get access to target of original proxy
     /// </summary>
@@ -41,7 +36,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         /// <value>The target.</value>
         object Target { get; }
     }
-
 
     /// <summary>
     /// Proxies Calls allows subclasser to override do extra actions before or after base invocation
@@ -63,6 +57,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         }
 
 #if !SILVERLIGHT
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImpromptuForwarder"/> class.
         /// </summary>
@@ -72,8 +67,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
            StreamingContext context)
             : base(info, context)
         {
-
-
             Target = info.GetValue<IDictionary<string, object>>("Target");
         }
 
@@ -89,6 +82,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             base.GetObjectData(info, context);
             info.AddValue("Target", Target);
         }
+
 #endif
 
         /// <summary>
@@ -109,7 +103,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             }
             return base.GetDynamicMemberNames();
         }
-
 
         /// <summary>
         /// Gets or sets the target.
@@ -161,7 +154,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -170,7 +162,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         /// <param name="binder">Provides information about the invoke operation.</param>
         /// <param name="args">
         /// The arguments that are passed to the object during the invoke operation.
-        /// For example, for the sampleObject(100) operation, where sampleObject is derived 
+        /// For example, for the sampleObject(100) operation, where sampleObject is derived
         /// from the <see cref="T:System.Dynamic.DynamicObject"/> class, <paramref name="args"/>[0] is equal to 100.
         /// </param>
         /// <param name="result">The result of the object invocation.</param>
@@ -190,7 +182,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             try
             {
                 result = Impromptu.Invoke(CallTarget, tArgs);
-
             }
             catch (RuntimeBinderException)
             {
@@ -201,7 +192,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
                 }
                 catch (RuntimeBinderException)
                 {
-
                     return false;
                 }
             }
@@ -228,7 +218,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             try
             {
                 result = Impromptu.InvokeMember(CallTarget, binder.Name, tArgs);
-
             }
             catch (RuntimeBinderException)
             {
@@ -239,13 +228,11 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
                 }
                 catch (RuntimeBinderException)
                 {
-
                     return false;
                 }
             }
             return true;
         }
-
 
         /// <summary>
         /// Forwards the invoke operation.
@@ -335,8 +322,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             object[] tArgs = Util.NameArgsIfNecessary(binder.CallInfo, tCombinedArgs);
             try
             {
-
-
                 Impromptu.InvokeSetIndex(CallTarget, tArgs);
                 return true;
             }
@@ -406,7 +391,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
                 return false;
             }
         }
-
 
         /// <summary>
         /// Equals the specified other.

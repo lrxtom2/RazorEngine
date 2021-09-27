@@ -6,6 +6,7 @@
     public interface IEncodedStringFactory
     {
         #region Methods
+
         /// <summary>
         /// Creates a <see cref="IEncodedString"/> instance for the specified raw string.
         /// </summary>
@@ -19,6 +20,7 @@
         /// <param name="value">The object instance.</param>
         /// <returns>An instance of <see cref="IEncodedString"/>.</returns>
         IEncodedString CreateEncodedString(object value);
-        #endregion
+
+        #endregion Methods
     }
 }

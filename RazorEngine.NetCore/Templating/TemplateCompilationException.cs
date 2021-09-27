@@ -2,9 +2,6 @@
 {
     using RazorEngine.Compilation;
     using System;
-#if !RAZOR4
-    using System.CodeDom.Compiler;
-#endif
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Diagnostics.CodeAnalysis;
@@ -22,26 +19,32 @@
         /// The error text of the error.
         /// </summary>
         public string ErrorText { get; private set; }
+
         /// <summary>
         /// The file name of the error source.
         /// </summary>
         public string FileName { get; private set; }
+
         /// <summary>
         /// The line number of the error location
         /// </summary>
         public int Line { get; private set; }
+
         /// <summary>
         /// The column number of the error location.
         /// </summary>
         public int Column { get; private set; }
+
         /// <summary>
         /// The number of the error.
         /// </summary>
         public string ErrorNumber { get; private set; }
+
         /// <summary>
         /// Indicates whether the error is a warning.
         /// </summary>
         public bool IsWarning { get; private set; }
+
         /// <summary>
         /// Creates a new Compiler error instance.
         /// </summary>
@@ -85,8 +88,8 @@
         {
             var errorMsgs = string.Join("\n\t", errors.Select(error =>
                 string.Format(
-                    " - {0}: ({1}, {2}) {3}", 
-                    error.IsWarning ? "warning" : "error", 
+                    " - {0}: ({1}, {2}) {3}",
+                    error.IsWarning ? "warning" : "error",
                     error.Line, error.Column, error.ErrorText)));
 
             const string rawTemplateFileMsg = "The template-file we tried to compile is: {0}\n";
@@ -95,9 +98,12 @@
             const string rawSourceCode = "The generated source code is: {0}\n";
 
             string templateFileMsg;
-            if (string.IsNullOrEmpty(template.TemplateFile)) {
+            if (string.IsNullOrEmpty(template.TemplateFile))
+            {
                 templateFileMsg = string.Format(rawTemplate, Separate(template.Template ?? string.Empty));
-	        } else{
+            }
+            else
+            {
                 templateFileMsg = string.Format(rawTemplateFileMsg, template.TemplateFile ?? string.Empty);
             }
             string tempFilesMsg = string.Empty;
@@ -120,12 +126,12 @@
 
             var rawMessage = @"Errors while compiling a Template.
 Please try the following to solve the situation:
-  * If the problem is about missing/invalid references or multiple defines either try to load 
+  * If the problem is about missing/invalid references or multiple defines either try to load
     the missing references manually (in the compiling appdomain!) or
     Specify your references manually by providing your own IReferenceResolver implementation.
     See https://antaris.github.io/RazorEngine/ReferenceResolver.html for details.
     Currently all references have to be available as files!
-  * If you get 'class' does not contain a definition for 'member': 
+  * If you get 'class' does not contain a definition for 'member':
         try another modelType (for example 'null' to make the model dynamic).
         NOTE: You CANNOT use typeof(dynamic) to make the model dynamic!
     Or try to use static instead of anonymous/dynamic types.
@@ -136,6 +142,7 @@ More details about the error:
         }
 
         #region Constructors
+
         /// <summary>
         /// Initialises a new instance of <see cref="TemplateCompilationException"/>.
         /// </summary>
@@ -182,28 +189,15 @@ More details about the error:
             CompilationData = new CompilationData(sourceCode, tmpFolder);
             Template = info.GetString("Template");
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Properties
+
         /// <summary>
         /// Gets the set of compiler errors.
         /// </summary>
         public ReadOnlyCollection<RazorEngineCompilerError> CompilerErrors { get; private set; }
-
-#if !RAZOR4
-        /// <summary>
-        /// Gets the set of compiler errors.
-        /// </summary>
-        [Obsolete("Use CompilerErrors instead, will be removed in 4.0.0")]
-        public ReadOnlyCollection<CompilerError> Errors
-        {
-            get
-            {
-                return new ReadOnlyCollection<CompilerError>(
-                    CompilerErrors.Select(error => new CompilerError(error.FileName, error.Line, error.Column, error.ErrorNumber, error.ErrorText)).ToList());
-            }
-        }
-#endif
 
         /// <summary>
         /// Gets some copilation specific (temporary) data.
@@ -213,8 +207,8 @@ More details about the error:
         /// <summary>
         /// Gets the generated source code.
         /// </summary>
-        public string SourceCode 
-        { 
+        public string SourceCode
+        {
             get
             {
                 return CompilationData.SourceCode;
@@ -225,9 +219,11 @@ More details about the error:
         /// Gets the source template that wasn't compiled.
         /// </summary>
         public string Template { get; private set; }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Gets the object data for serialisation.
         /// </summary>
@@ -247,6 +243,7 @@ More details about the error:
             info.AddValue("TmpFolder", CompilationData.TmpFolder ?? string.Empty);
             info.AddValue("Template", Template ?? string.Empty);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

@@ -1,20 +1,18 @@
 ﻿namespace RazorEngine.Templating
 {
+    using Compilation;
+    using Configuration;
+    using RazorEngine.Compilation.ReferenceResolver;
     using System;
     using System.Diagnostics.Contracts;
-    using System.Linq;
     using System.Reflection;
-
-    using Compilation;
-    using Compilation.Inspectors;
-    using Configuration;
     using System.Security;
     using System.Threading.Tasks;
-    using RazorEngine.Compilation.ReferenceResolver;
 
     internal class RazorEngineCore : IDisposable
     {
         private readonly ReadOnlyTemplateServiceConfiguration _config;
+
         /// <summary>
         /// We need this for creating the templates.
         /// </summary>
@@ -31,7 +29,7 @@
             {
                 throw new ArgumentNullException("config");
             }
-            
+
             _config = config;
             _cached = cached;
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
@@ -57,7 +55,6 @@
         /// </summary>
         public ITemplateServiceConfiguration Configuration { get { return _config; } }
 
-
         /// <summary>
         /// Compiles the specified template.
         /// </summary>
@@ -70,7 +67,7 @@
             var result = CreateTemplateType(source, modelType);
             return new CompiledTemplate(result.Item2, key, source, result.Item1, modelType);
         }
-        
+
         /// <summary>
         /// Creates an instance of <see cref="ITemplate"/> from the specified string template.
         /// </summary>
@@ -85,11 +82,6 @@
             ITemplate instance = _config.Activator.CreateInstance(context);
             instance.InternalTemplateService = new InternalTemplateService(this, template.Key);
 
-#if !NO_CODEDOM
-#pragma warning disable 0618 // Backwards Compat.
-            instance.TemplateService = new TemplateService(_cached);
-#pragma warning restore 0618 // Backwards Compat.
-#endif
             instance.Razor = _cached;
             instance.SetData(model, viewbag);
             return instance;
@@ -101,7 +93,8 @@
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type or NULL if no model exists.</param>
         /// <returns>An instance of <see cref="Type"/>.</returns>
-        [Pure][SecuritySafeCritical] // This should not be SecuritySafeCritical (make the template classes SecurityCritical instead)
+        [Pure]
+        [SecuritySafeCritical] // This should not be SecuritySafeCritical (make the template classes SecurityCritical instead)
         public virtual Tuple<Type, CompilationData> CreateTemplateType(ITemplateSource razorTemplate, Type modelType)
         {
             var context = new TypeContext(_references.AddReferences)
@@ -119,20 +112,14 @@
             {
                 service.Debug = _config.Debug;
                 service.DisableTempFileLocking = _config.DisableTempFileLocking;
-#if !RAZOR4
-#pragma warning disable 0618 // Backwards Compat.
-                service.CodeInspectors = _config.CodeInspectors ?? Enumerable.Empty<ICodeInspector>();
-#pragma warning restore 0618 // Backwards Compat.
-#endif
+
                 service.ReferenceResolver = _config.ReferenceResolver ?? new UseCurrentAssembliesReferenceResolver();
-                
+
                 var result = service.CompileType(context);
 
                 return result;
             }
         }
-
-
 
         /// <summary>
         /// Runs the specified template and returns the result.
@@ -142,21 +129,13 @@
         /// <param name="model"></param>
         /// <param name="viewBag">The ViewBag contents or NULL for an initially empty ViewBag.</param>
         /// <returns>The string result of the template.</returns>
-#if RAZOR4
         public async Task RunTemplate(ICompiledTemplate template, System.IO.TextWriter writer, object model, DynamicViewBag viewBag)
-#else
-        public void RunTemplate(ICompiledTemplate template, System.IO.TextWriter writer, object model, DynamicViewBag viewBag)
-#endif
         {
             if (template == null)
                 throw new ArgumentNullException("template");
 
             var instance = CreateTemplate(template, model, viewBag);
-#if RAZOR4
             await instance.Run(CreateExecuteContext(), writer);
-#else
-            instance.Run(CreateExecuteContext(), writer);
-#endif
         }
 
         /// <summary>
@@ -207,5 +186,4 @@
             }
         }
     }
-
 }

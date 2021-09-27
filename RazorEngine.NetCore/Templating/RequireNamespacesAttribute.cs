@@ -11,6 +11,7 @@
     public sealed class RequireNamespacesAttribute : Attribute
     {
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="RequireNamespacesAttribute"/>.
         /// </summary>
@@ -26,13 +27,16 @@
 
             Namespaces = set;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets the set of required namespace imports.
         /// </summary>
         public IEnumerable<string> Namespaces { get; private set; }
-        #endregion
+
+        #endregion Properties
     }
 }

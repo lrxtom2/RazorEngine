@@ -3,13 +3,12 @@
 namespace RazorEngine.Compilation
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Dynamic;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using System.Text.RegularExpressions;
-    using System.Collections;
 
     /// <summary>
     /// Provides service methods for compilation.
@@ -17,14 +16,17 @@ namespace RazorEngine.Compilation
     public static class CompilerServicesUtility
     {
         #region Fields
+
         private static readonly Type DynamicType = typeof(DynamicObject);
         private static readonly Type ExpandoType = typeof(ExpandoObject);
         private static readonly Type EnumerableType = typeof(IEnumerable);
         private static readonly Type EnumeratorType = typeof(IEnumerator);
         private static readonly Type GenericEnumerableType = typeof(IEnumerable<>);
-        #endregion
+
+        #endregion Fields
 
         #region Methods
+
         /// <summary>
         /// Determines if the specified type is an anonymous type.
         /// </summary>
@@ -44,7 +46,7 @@ namespace RazorEngine.Compilation
         }
 
         /// <summary>
-        /// Checks if the given type is a anonymous type or a generic type containing a 
+        /// Checks if the given type is a anonymous type or a generic type containing a
         /// reference type as generic type argument
         /// </summary>
         /// <param name="t">the type to check</param>
@@ -213,9 +215,8 @@ namespace RazorEngine.Compilation
             if (type.IsGenericTypeDefinition || type.IsGenericType)
                 fullName = type.FullName.Substring(0, type.FullName.IndexOf('`'));
 
-            return fullName.Replace("+", ".");;
+            return fullName.Replace("+", "."); ;
         }
-
 
         /// <summary>
         /// Return the raw type name (including namespace) without any generic arguments.
@@ -235,7 +236,6 @@ namespace RazorEngine.Compilation
         /// <returns></returns>
         public static string CSharpCreateGenericType(Type templateType, string modelTypeName, bool throwWhenNotGeneric)
         {
-
             var templateTypeName = CSharpGetRawTypeName(templateType);
 
             if (!templateType.IsGenericTypeDefinition || !templateType.IsGenericType)
@@ -249,7 +249,7 @@ namespace RazorEngine.Compilation
 
             return templateTypeName + "<" + modelTypeName + ">";
         }
-        
+
         /// <summary>
         /// Return the raw type name (including namespace) with the given modelTypeName as generic argument (if applicable).
         /// Returns the typename in a way it can be used in VB.net code.
@@ -274,6 +274,6 @@ namespace RazorEngine.Compilation
             return templateTypeName + "(Of " + modelTypeName + ")";
         }
 
-        #endregion
+        #endregion Methods
     }
 }

@@ -1,11 +1,9 @@
 ﻿namespace RazorEngine.Configuration
 {
+    using Compilation;
+    using Microsoft.AspNetCore.Razor.Language;
     using System;
     using System.Diagnostics.Contracts;
-
-    using Compilation;
-    using Compilation.Inspectors;
-    using Microsoft.AspNetCore.Razor.Language;
     using Templating;
     using Text;
 
@@ -15,10 +13,13 @@
     internal class FluentConfigurationBuilder : IConfigurationBuilder
     {
         #region Fields
+
         private readonly TemplateServiceConfiguration _config;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="FluentConfigurationBuilder"/>.
         /// </summary>
@@ -29,9 +30,11 @@
 
             _config = config;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         /// <summary>
         /// Sets the activator.
         /// </summary>
@@ -69,34 +72,6 @@
             _config.Activator = new DelegateActivator(activator);
             return this;
         }
-
-#if !RAZOR4
-        /// <summary>
-        /// Adds the specified code inspector.
-        /// </summary>
-        /// <typeparam name="TInspector">The code inspector type.</typeparam>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        public IConfigurationBuilder AddInspector<TInspector>() where TInspector : ICodeInspector, new()
-        {
-            return AddInspector(new TInspector());
-        }
-
-        /// <summary>
-        /// Adds the specified code inspector.
-        /// </summary>
-        /// <param name="inspector">The code inspector.</param>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        public IConfigurationBuilder AddInspector(ICodeInspector inspector)
-        {
-            if (inspector == null)
-                throw new ArgumentNullException("inspector");
-
-            _config.CodeInspectors.Add(inspector);
-            return this;
-        }
-#endif
 
         /// <summary>
         /// Sets that dynamic models should be fault tollerant in accepting missing properties.
@@ -174,19 +149,7 @@
 
             return this;
         }
-#if !NO_CONFIGURATION
-        /// <summary>
-        /// Sets the resolve used to locate unknown templates.
-        /// </summary>
-        /// <typeparam name="TResolver">The resolve type.</typeparam>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("Please use the ManageUsing method instead.")]
-        public IConfigurationBuilder ResolveUsing<TResolver>() where TResolver : ITemplateResolver, new()
-        {
-            _config.Resolver = new TResolver();
-            return this;
-        }
-#endif
+
         /// <summary>
         /// Sets the resolve used to locate unknown templates.
         /// </summary>
@@ -197,21 +160,7 @@
             _config.TemplateManager = new TResolver();
             return this;
         }
-#if !NO_CONFIGURATION
-        /// <summary>
-        /// Sets the resolver used to locate unknown templates.
-        /// </summary>
-        /// <param name="resolver">The resolver instance to use.</param>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("Please use the ManageUsing method instead.")]
-        public IConfigurationBuilder ResolveUsing(ITemplateResolver resolver)
-        {
-            Contract.Requires(resolver != null);
 
-            _config.Resolver = resolver;
-            return this;
-        }
-#endif
         /// <summary>
         /// Sets the resolver used to locate unknown templates.
         /// </summary>
@@ -271,12 +220,8 @@
         /// <returns>The current configuration builder.</returns>
         public IConfigurationBuilder UseDefaultCompilerServiceFactory()
         {
-            _config.CompilerServiceFactory =
-#if RAZOR4
-                new Roslyn.RoslynCompilerServiceFactory();
-#else
-                new DefaultCompilerServiceFactory();
-#endif
+            _config.CompilerServiceFactory = new Roslyn.RoslynCompilerServiceFactory();
+
             return this;
         }
 
@@ -324,9 +269,11 @@
                 case Encoding.Html:
                     _config.EncodedStringFactory = new HtmlEncodedStringFactory();
                     break;
+
                 case Encoding.Raw:
                     _config.EncodedStringFactory = new RawStringFactory();
                     break;
+
                 default:
                     throw new ArgumentException("Unsupported encoding: " + encoding);
             }
@@ -334,7 +281,8 @@
             return this;
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete        
+#pragma warning disable CS0618 // Type or member is obsolete
+
         /// <summary>
         /// Callback to register custom Model directives or configure the razor engine builder in another form.
         /// </summary>
@@ -346,6 +294,7 @@
             _config.ConfigureCompilerBuilder = options;
             return this;
         }
-        #endregion
+
+        #endregion Methods
     }
 }

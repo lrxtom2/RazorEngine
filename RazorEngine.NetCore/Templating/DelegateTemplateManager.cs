@@ -1,7 +1,6 @@
 ﻿namespace RazorEngine.Templating
 {
     using System;
-    using System.Diagnostics.Contracts;
 
     /// <summary>
     /// Provides an <see cref="ITemplateManager"/> that supports delegated template resolution.
@@ -9,18 +8,22 @@
     public class DelegateTemplateManager : ITemplateManager
     {
         #region Fields
+
         private readonly Func<string, string> _resolver;
 
         private readonly System.Collections.Concurrent.ConcurrentDictionary<ITemplateKey, ITemplateSource> _dynamicTemplates =
             new System.Collections.Concurrent.ConcurrentDictionary<ITemplateKey, ITemplateSource>();
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
-        /// Creates a new DelegateTemplateManager which throws an exception when 
+        /// Creates a new DelegateTemplateManager which throws an exception when
         /// we try to resolve something (supports dynamically adding templates).
         /// </summary>
         public DelegateTemplateManager() : this(null) { }
+
         /// <summary>
         /// Initialises a new instance of <see cref="DelegateTemplateResolver"/>.
         /// </summary>
@@ -35,9 +38,11 @@
                         name));
             });
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         /// <summary>
         /// Resolves the template content with the specified name.
         /// </summary>
@@ -73,8 +78,8 @@
 
         /// <summary>
         /// Use this API to remove a dynamic template.
-        /// WARNING: using this API doesn't really help you if the 
-        /// template is already cached. 
+        /// WARNING: using this API doesn't really help you if the
+        /// template is already cached.
         /// So will need to invalidate the cache as well.
         /// </summary>
         /// <param name="key"></param>
@@ -95,6 +100,7 @@
         {
             return new NameOnlyTemplateKey(name, templateType, context);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

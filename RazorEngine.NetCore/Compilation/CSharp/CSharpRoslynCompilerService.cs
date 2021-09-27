@@ -1,21 +1,10 @@
-﻿#if RAZOR4
-#else
-using System.Web.Razor.Parser;
-#endif
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RazorEngine.Compilation;
+using RazorEngine.Compilation.ReferenceResolver;
 using System;
 using System.Collections.Generic;
 using System.Security;
-using System.Text;
-#if !RAZOR4
-using System.CodeDom.Compiler;
-using System.Web.Razor;
-using System.IO;
-using System.Globalization;
-#endif
-using RazorEngine.Compilation.ReferenceResolver;
 
 namespace RazorEngine.Roslyn.CSharp
 {
@@ -25,13 +14,6 @@ namespace RazorEngine.Roslyn.CSharp
     [SecurityCritical]
     public class CSharpRoslynCompilerService : RoslynCompilerServiceBase
     {
-#if !RAZOR4
-        /// <summary>
-        /// We need a CodeDom instance as pre Razor4 uses CodeDom 
-        /// internally and we need to generate the source code file...
-        /// </summary>
-        private Microsoft.CSharp.CSharpCodeProvider _codeDomProvider; 
-#endif
         /// <summary>
         /// Creates a new CSharpRoslynCompilerService instance.
         /// </summary>
@@ -41,9 +23,6 @@ namespace RazorEngine.Roslyn.CSharp
         public CSharpRoslynCompilerService(bool strictMode = true)
             : base()
         {
-#if !RAZOR4
-            _codeDomProvider = new Microsoft.CSharp.CSharpCodeProvider(); 
-#endif
         }
 
         /// <summary>
@@ -54,27 +33,6 @@ namespace RazorEngine.Roslyn.CSharp
             [SecuritySafeCritical]
             get { return "cs"; }
         }
-
-#if !RAZOR4
-        /// <summary>
-        /// Inspects the GeneratorResults and returns the source code.
-        /// </summary>
-        /// <param name="results"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        [SecurityCritical]
-        public override string InspectSource(GeneratorResults results, TypeContext context)
-        {
-            string generatedCode;
-            var builder = new StringBuilder();
-            using (var writer = new StringWriter(builder, CultureInfo.InvariantCulture))
-            {
-                _codeDomProvider.GenerateCodeFromCompileUnit(results.GeneratedCode, writer, new CodeGeneratorOptions());
-                generatedCode = builder.ToString();
-            }
-            return generatedCode;
-        }
-#endif
 
         /// <summary>
         /// Build a C# typename.
@@ -114,6 +72,7 @@ namespace RazorEngine.Roslyn.CSharp
         {
             return CSharpCompilation.Create(assemblyName);
         }
+
         /// <summary>
         /// Creates a CSharpCompilationOptions instance.
         /// </summary>

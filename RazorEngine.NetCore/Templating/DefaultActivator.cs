@@ -9,6 +9,7 @@
     internal class DefaultActivator : IActivator
     {
         #region Methods
+
         /// <summary>
         /// Creates an instance of the specifed template.
         /// </summary>
@@ -22,6 +23,7 @@
 
             return context.Loader.CreateInstance(context.TemplateType);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

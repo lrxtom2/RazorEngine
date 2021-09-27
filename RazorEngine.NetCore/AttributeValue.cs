@@ -1,6 +1,7 @@
 namespace RazorEngine
 {
     using System;
+
     /// <summary>
     /// Razor Html Attribute value
     /// </summary>

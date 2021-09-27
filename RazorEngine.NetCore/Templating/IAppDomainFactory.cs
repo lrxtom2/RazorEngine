@@ -8,11 +8,13 @@
     public interface IAppDomainFactory
     {
         #region Methods
+
         /// <summary>
         /// Creates the <see cref="AppDomain"/>.
         /// </summary>
         /// <returns>The <see cref="AppDomain"/> instance.</returns>
         AppDomain CreateAppDomain();
-        #endregion
+
+        #endregion Methods
     }
 }

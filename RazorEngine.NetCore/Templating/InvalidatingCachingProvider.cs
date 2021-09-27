@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -80,8 +75,10 @@ namespace RazorEngine.Templating
                 // new item added
                 _assemblies.Add(template.TemplateAssembly);
                 var dict = new ConcurrentDictionary<Type, ICompiledTemplate>();
-                dict.AddOrUpdate(modelTypeKey, template, (t, old) => {
-                    throw new Exception("Expected the dictionary to be empty."); });
+                dict.AddOrUpdate(modelTypeKey, template, (t, old) =>
+                {
+                    throw new Exception("Expected the dictionary to be empty.");
+                });
                 return dict;
             }, (key, dict) =>
             {

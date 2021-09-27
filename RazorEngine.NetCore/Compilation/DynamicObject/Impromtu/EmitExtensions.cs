@@ -1,12 +1,12 @@
-﻿// 
+﻿//
 //  Copyright 2010  Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,13 @@ using System.Linq.Expressions;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Build
 {
+    using Microsoft.CSharp.RuntimeBinder;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
-    using Microsoft.CSharp.RuntimeBinder;
     using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
     ///<summary>
@@ -88,6 +88,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 _generator.MarkLabel(_label);
             }
         }
+
         /// <summary>
         /// Gets the field info even if generic type parameter.
         /// </summary>
@@ -107,8 +108,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
             return type.GetField(fieldName);
         }
-
-
 
         /// <summary>
         /// Gets the method info even if generic type parameter.
@@ -132,8 +131,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             return type.GetMethod(methodName, argTypes);
         }
 
-
-
         /// <summary>
         /// Gets the method info even if generic type parameter.
         /// </summary>
@@ -154,8 +151,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
             return type.GetMethod(methodName);
         }
-
-
 
         /// <summary>
         /// Emits branch true. expects using keyword.
@@ -229,8 +224,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             call(generator);
         }
 
-
-
         /// <summary>
         /// Emits creating the callsite.
         /// </summary>
@@ -240,7 +233,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         {
             generator.Emit(OpCodes.Call, typeof(CallSite<>).MakeGenericType(funcType).GetMethodEvenIfGeneric("Create", new[] { typeof(CallSiteBinder) }));
         }
-
 
         /// <summary>
         /// Emits the call invoke delegate.
@@ -287,21 +279,24 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 case 0:
                     generator.Emit(OpCodes.Stloc_0);
                     return;
+
                 case 1:
                     generator.Emit(OpCodes.Stloc_1);
                     return;
+
                 case 2:
                     generator.Emit(OpCodes.Stloc_2);
                     return;
+
                 case 3:
                     generator.Emit(OpCodes.Stloc_3);
                     return;
+
                 default:
                     generator.Emit(OpCodes.Stloc, location);
                     return;
             }
         }
-
 
         /// <summary>
         /// Emits the load argument.
@@ -315,15 +310,19 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 case 0:
                     generator.Emit(OpCodes.Ldarg_0);
                     return;
+
                 case 1:
                     generator.Emit(OpCodes.Ldarg_1);
                     return;
+
                 case 2:
                     generator.Emit(OpCodes.Ldarg_2);
                     return;
+
                 case 3:
                     generator.Emit(OpCodes.Ldarg_3);
                     return;
+
                 default:
                     generator.Emit(OpCodes.Ldarg, location);
                     return;
@@ -342,21 +341,24 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 case 0:
                     generator.Emit(OpCodes.Ldloc_0);
                     return;
+
                 case 1:
                     generator.Emit(OpCodes.Ldloc_1);
                     return;
+
                 case 2:
                     generator.Emit(OpCodes.Ldloc_2);
                     return;
+
                 case 3:
                     generator.Emit(OpCodes.Ldloc_3);
                     return;
+
                 default:
                     generator.Emit(OpCodes.Ldloc, location);
                     return;
             }
         }
-
 
         /// <summary>
         /// Emits the dynamic method invoke binder.
@@ -385,8 +387,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
             generator.EmitTypeOf(context);
             var tList = new List<Action<ILGenerator>> { gen => gen.EmitCreateCSharpArgumentInfo(CSharpArgumentInfoFlags.None) };
-
-
 
             tList.AddRange(argInfo.Zip(argNames, (p, n) => new { p, n }).Select(arg => (Action<ILGenerator>)(gen =>
             {
@@ -422,8 +422,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("InvokeMember", new[] { typeof(CSharpBinderFlags), typeof(string), typeof(IEnumerable<Type>), typeof(Type), typeof(CSharpArgumentInfo[]) }));
         }
 
-
-
         /// <summary>
         /// Emits the dynamic set binder.
         /// </summary>
@@ -446,8 +444,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("SetMember", new[] { typeof(CSharpBinderFlags), typeof(string), typeof(Type), typeof(CSharpArgumentInfo[]) }));
             else
                 generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("SetIndex", new[] { typeof(CSharpBinderFlags), typeof(Type), typeof(CSharpArgumentInfo[]) }));
-
-
         }
 
         /// <summary>
@@ -472,8 +468,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("SetMember", new[] { typeof(CSharpBinderFlags), typeof(string), typeof(Type), typeof(CSharpArgumentInfo[]) }));
             else
                 generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("SetIndex", new[] { typeof(CSharpBinderFlags), typeof(Type), typeof(CSharpArgumentInfo[]) }));
-
-
         }
 
         /// <summary>
@@ -495,7 +489,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             generator.EmitArray(typeof(CSharpArgumentInfo), tList);
 
             generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("BinaryOperation", new[] { typeof(CSharpBinderFlags), typeof(ExpressionType), typeof(Type), typeof(CSharpArgumentInfo[]) }));
-
         }
 
         /// <summary>
@@ -521,8 +514,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("GetIndex", new[] { typeof(CSharpBinderFlags), typeof(Type), typeof(CSharpArgumentInfo[]) }));
         }
 
-
-
         /// <summary>
         /// Emits creating the <see cref="CSharpArgumentInfo"></see>
         /// </summary>
@@ -539,7 +530,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             generator.Emit(OpCodes.Call, typeof(CSharpArgumentInfo).GetMethod("Create", new[] { typeof(CSharpArgumentInfoFlags), typeof(string) }));
         }
 
-
         /// <summary>
         /// Emits the dynamic convert binder.
         /// </summary>
@@ -554,7 +544,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             generator.EmitTypeOf(context);
             generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("Convert", new[] { typeof(CSharpBinderFlags), typeof(Type), typeof(Type) }));
         }
-
 
         /// <summary>
         /// Emits the dynamic event binder.
@@ -571,7 +560,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             generator.Emit(OpCodes.Call, typeof(Binder).GetMethod("IsEvent", new[] { typeof(CSharpBinderFlags), typeof(string), typeof(Type) }));
         }
 
-
         /// <summary>
         /// Emits the typeof(Type)
         /// </summary>
@@ -579,7 +567,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// <param name="type">The type.</param>
         public static void EmitTypeOf(this ILGenerator generator, Type type)
         {
-
             generator.Emit(OpCodes.Ldtoken, type);
             var tTypeMeth = typeof(Type).GetMethod("GetTypeFromHandle", new[] { typeof(RuntimeTypeHandle) });
             generator.Emit(OpCodes.Call, tTypeMeth);
@@ -594,7 +581,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// <param name="type">The type.</param>
         public static void EmitTypeOf(this ILGenerator generator, TypeToken type)
         {
-
             generator.Emit(OpCodes.Ldtoken, type.Token);
             var tTypeMeth = typeof(Type).GetMethod("GetTypeFromHandle", new[] { typeof(RuntimeTypeHandle) });
             generator.Emit(OpCodes.Call, tTypeMeth);

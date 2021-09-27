@@ -1,35 +1,33 @@
-﻿// 
+﻿//
 //  Copyright 2010  Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+//using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
+using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
-using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
-//using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Build
 {
+    using Microsoft.CSharp.RuntimeBinder;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Runtime.CompilerServices;
-    using Microsoft.CSharp.RuntimeBinder;
-
 
     ///<summary>
     /// Does most of the work buiding and caching proxies
@@ -47,6 +45,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
         private static readonly MethodInfo ActLike = typeof(BuildProxy).GetMethod("RecursiveActLike",
                                                                                   new[] { typeof(object) });
+
         /// <summary>
         /// Calls ActLike on the given object.
         /// </summary>
@@ -57,7 +56,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         {
             return target.ActLike<TInterface>();
         }
-
 
 #if !SILVERLIGHT && !NO_APPDOMAIN
         internal class TempBuilder : IDisposable
@@ -74,7 +72,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 Dispose();
             }
 
-
             public void Dispose()
             {
                 if (_disposed)
@@ -86,7 +83,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 _tempSaveAssembly = null;
                 _tempBuilder = null;
             }
-
         }
 
         /// <summary>
@@ -95,7 +91,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// <param name="name">The name.</param>
         /// <returns></returns>
         /// <remarks>
-        ///     This may be used for generating an assembly for preloading proxies, however you must be very careful when doing so as 
+        ///     This may be used for generating an assembly for preloading proxies, however you must be very careful when doing so as
         ///     changes could make the emitted asssembly out of date very easily.
         /// </remarks>
         public static IDisposable WriteOutDll(string name)
@@ -129,7 +125,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
                 return _typeHash[tNewHash];
             }
-
         }
 
         /// <summary>
@@ -153,7 +148,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
                 return _typeHash[tNewHash];
             }
-
         }
 
         /// <summary>
@@ -197,6 +191,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
             return tSuccess;
         }
+
         /// <summary>
         /// Preloads proxies that ActLike uses from assembly.
         /// </summary>
@@ -223,20 +218,13 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
         private static Type BuildTypeHelper(ModuleBuilder builder, Type contextType, IDictionary<string, Type> informalInterface)
         {
-
-
             var tB = builder.DefineType(
                 string.Format("ActLike_{0}_{1}", "InformalInterface", Guid.NewGuid().ToString("N")), TypeAttributes.Public | TypeAttributes.Class,
                 typeof(ActLikeProxy));
 
-
-
-
             foreach (var tInterface in informalInterface)
             {
-
                 MakePropertyDescribedProperty(builder, tB, contextType, tInterface.Key, tInterface.Value);
-
             }
 
 #if NET40
@@ -249,14 +237,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
         private static void MakePropertyDescribedProperty(ModuleBuilder builder, TypeBuilder typeBuilder, Type contextType, string tName, Type tReturnType)
         {
-
-
             var tGetName = "get_" + tName;
 
             var tEmitInfo = new PropertyEmitInfo { Name = tName, GetName = tGetName, DefaultInterfaceImplementation = true, ContextType = contextType, ResolveReturnType = tReturnType };
-
-
-
 
             MakePropertyHelper(builder, typeBuilder, tEmitInfo);
         }
@@ -304,7 +287,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
         private static Type BuildTypeHelper(ModuleBuilder builder, Type contextType, params Type[] interfaces)
         {
-
             var tInterfacesMainList = interfaces.Distinct().ToArray();
             var tB = builder.DefineType(
                 string.Format("ActLike_{0}_{1}", tInterfacesMainList.First().Name, Guid.NewGuid().ToString("N")), TypeAttributes.Public | TypeAttributes.Class,
@@ -315,9 +297,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                     new object[] { interfaces, contextType }));
             tB.SetCustomAttribute(new CustomAttributeBuilder(typeof(SerializableAttribute).GetConstructor(Type.EmptyTypes), new object[] { }));
 
-
             var tInterfaces = tInterfacesMainList.Concat(tInterfacesMainList.SelectMany(it => it.GetInterfaces()));
-
 
             var tPropertyNameHash = new HashSet<string>();
             var tMethodHashSet = new HashSet<MethodSigHash>();
@@ -370,8 +350,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             return tType;
         }
 
-
-
         private static object CustomAttributeTypeArgument(CustomAttributeTypedArgument argument)
         {
             if (argument.Value is ReadOnlyCollection<CustomAttributeTypedArgument>)
@@ -383,7 +361,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             return argument.Value;
         }
-
 
         private static CustomAttributeBuilder GetAttributeBuilder(CustomAttributeData data)
         {
@@ -423,8 +400,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
         private static void MakeMethod(ModuleBuilder builder, MethodInfo info, TypeBuilder typeBuilder, Type contextType, bool nonRecursive = false, bool defaultImp = true)
         {
-
-
             var tEmitInfo = new MethodEmitInfo { Name = info.Name, DefaultInterfaceImplementation = defaultImp, NonRecursive = nonRecursive };
 
             var alias = info.GetCustomAttributes(typeof(AliasAttribute), false).FirstOrDefault() as AliasAttribute;
@@ -435,7 +410,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             var tParamAttri = info.GetParameters();
             Type[] tParamTypes = tParamAttri.Select(it => it.ParameterType).ToArray();
-
 
             IEnumerable<string> tArgNames;
             if (info.GetCustomAttributes(typeof(UseNamedArgumentAttribute), false).Any() ||
@@ -453,16 +427,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                     : Enumerable.Repeat(default(string), tParam.i).Concat(tParamAttri.Skip(Math.Min(tParam.i - 1, 0)).Select(it => it.Name)).ToList();
             }
 
-
             var tReturnType = typeof(void);
             if (info.ReturnParameter != null)
                 tReturnType = info.ReturnParameter.ParameterType;
 
-
             var tCallSiteName = tEmitInfo.CallSiteName;
             var tCStp = DefineBuilderForCallSite(builder, tCallSiteName);
-
-
 
             var tReplacedTypes = GetParamTypes(tCStp, info);
             if (tReplacedTypes != null)
@@ -496,11 +466,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 tPublicPrivate = MethodAttributes.Private;
             }
 
-
             var tMethodBuilder = typeBuilder.DefineMethod(tPrefixName,
                                                 tPublicPrivate | MethodAttributes.HideBySig | MethodAttributes.Virtual | MethodAttributes.Final | MethodAttributes.NewSlot);
-
-
 
             tReplacedTypes = GetParamTypes(tMethodBuilder, info);
             var tReducedParams = tParamTypes.Select(ReduceToElementType).ToArray();
@@ -561,10 +528,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 );
         }
 
-
-
-
-
         private static void EmitMethodBody(
             MethodBuilder methodBuilder,
             ParameterInfo[] paramInfo,
@@ -576,8 +539,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             var tConvertField = emitInfo.CallSiteType.GetFieldEvenIfGeneric(emitInfo.CallSiteConvertName);
             if (emitInfo.ResolveReturnType != typeof(void))
             {
-
-
                 using (tIlGen.EmitBranchTrue(gen => gen.Emit(OpCodes.Ldsfld, tConvertField)))
                 {
                     tIlGen.EmitDynamicConvertBinder(CSharpBinderFlags.None, emitInfo.ResolveReturnType, emitInfo.ContextType);
@@ -618,7 +579,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             tIlGen.Emit(OpCodes.Callvirt, typeof(IActLikeProxy).GetProperty("Original").GetGetMethod());
             for (var i = 1; i <= emitInfo.ResolvedParamTypes.Length; i++)
             {
-
                 tIlGen.EmitLoadArgument(i);
             }
             tIlGen.EmitCallInvokeFunc(emitInfo.CallSiteInvokeFuncType);
@@ -650,14 +610,11 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 tIlGen.EmitCallInvokeFunc(emitInfo.CallSiteConvertFuncType);
             }
 
-
             tIlGen.Emit(OpCodes.Ret);
         }
 
-
         private static void MakeProperty(ModuleBuilder builder, PropertyInfo info, TypeBuilder typeBuilder, Type contextType, bool nonRecursive = false, bool defaultImp = true)
         {
-
             var tGetMethod = info.GetGetMethod();
             var tSetMethod = info.GetSetMethod();
 
@@ -687,8 +644,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 CallSiteConvertName = "Convert_Get";
                 CallSiteInvokeGetName = "Invoke_Get";
                 CallSiteInvokeSetName = "Invoke_Set";
-
             }
+
             public string GetName { get; set; }
             public string SetName { get; set; }
 
@@ -709,7 +666,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             public string CallSiteSubtractAssignName { get; protected set; }
             public string CallSiteAddName { get; protected set; }
             public string CallSiteRemoveName { get; protected set; }
-
 
             public Type CallSiteIsEventFuncType { get; set; }
             public Type CallSiteAddAssignFuncType { get; set; }
@@ -747,12 +703,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             var tRemoveMethod = info.GetRemoveMethod();
             tEmitInfo.ResolveReturnType = info.EventHandlerType;
 
-
             var tCStp = DefineBuilderForCallSite(builder, tEmitInfo.CallSiteName);
 
-
             tEmitInfo.CallSiteIsEventFuncType = tCStp.DefineCallsiteField(tEmitInfo.CallSiteIsEventName, typeof(bool));
-
 
             tEmitInfo.CallSiteAddAssignFuncType = tCStp.DefineCallsiteField(tEmitInfo.CallSiteAddAssignName, typeof(object), tEmitInfo.ResolveReturnType);
 
@@ -777,7 +730,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             tEmitInfo.CallSiteType = tCallSite;
 
             var tMp = typeBuilder.DefineEvent(info.Name, EventAttributes.None, tEmitInfo.ResolveReturnType);
-
 
             var tSetField = tEmitInfo.CallSiteType.GetFieldEvenIfGeneric(tEmitInfo.CallSiteInvokeSetName);
             var tGetField = tEmitInfo.CallSiteType.GetFieldEvenIfGeneric(tEmitInfo.CallSiteInvokeGetName);
@@ -818,7 +770,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             if (!tEmitInfo.DefaultInterfaceImplementation)
             {
                 tRemovePrefixName = String.Format("{0}.{1}", info.DeclaringType.FullName, tRemovePrefixName);
-
             }
             var tRemoveBuilder = typeBuilder.DefineMethod(tRemovePrefixName,
                                                            tPublicPrivate
@@ -839,7 +790,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 tRemoveBuilder.DefineParameter(tParam.Position + 1, AttributesForParam(tParam), tParam.Name);
             }
 
-
             EmitRemoveEvent(tMp, tRemoveBuilder, info, tRemoveMethod, tGetField, tSetField, tIsEventField, tEmitInfo);
         }
 
@@ -848,7 +798,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                                              EmitEventInfo tEmitInfo)
         {
             var tIlGen = tRemoveBuilder.GetILGenerator();
-
 
             using (tIlGen.EmitBranchTrue(load => load.Emit(OpCodes.Ldsfld, tIsEventField)))
             {
@@ -890,7 +839,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                     tIlGen.EmitCallsiteCreate(tEmitInfo.CallSiteSubtractAssignFuncType);
                     tIlGen.Emit(OpCodes.Stsfld, tSubrtractAssignField);
                 }
-
 
                 using (tIlGen.EmitBranchTrue(gen => gen.Emit(OpCodes.Ldsfld, tGetField)))
                 {
@@ -958,16 +906,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         {
             var tIlGen = tAddBuilder.GetILGenerator();
 
-
-
             using (tIlGen.EmitBranchTrue(gen => gen.Emit(OpCodes.Ldsfld, tIsEventField)))
             {
                 tIlGen.EmitDynamicIsEventBinder(CSharpBinderFlags.None, tEmitInfo.Alias ?? tEmitInfo.Name, tEmitInfo.ContextType);
                 tIlGen.EmitCallsiteCreate(tEmitInfo.CallSiteIsEventFuncType);
                 tIlGen.Emit(OpCodes.Stsfld, tIsEventField);
             }
-
-
 
             using (tIlGen.EmitBranchTrue(
                 load => load.EmitInvocation(
@@ -1009,7 +953,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                     tIlGen.EmitCallsiteCreate(tEmitInfo.CallSiteInvokeGetFuncType);
                     tIlGen.Emit(OpCodes.Stsfld, tGetField);
                 }
-
 
                 tIlGen.Emit(OpCodes.Ldsfld, tSetField);
                 tIlGen.Emit(OpCodes.Ldfld, tSetField.FieldType.GetFieldEvenIfGeneric("Target"));
@@ -1066,9 +1009,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             tIlGen.Emit(OpCodes.Ret);
 
             tMp.SetAddOnMethod(tAddBuilder);
-
         }
-
 
         /// <summary>
         /// Makes the property helper.
@@ -1081,19 +1022,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// <param name="emitInfo">The emit info.</param>
         private static void MakePropertyHelper(ModuleBuilder builder, TypeBuilder typeBuilder, PropertyEmitInfo emitInfo, PropertyInfo info = null, MethodInfo getMethod = null, MethodInfo setMethod = null)
         {
-
-
             emitInfo.ResolvedIndexParamTypes = new Type[] { };
             if (info != null)
                 emitInfo.ResolvedIndexParamTypes = info.GetIndexParameters().Select(it => it.ParameterType).ToArray();
 
-
-
-
-
             var tCallSiteInvokeName = emitInfo.CallSiteName;
             var tCStp = DefineBuilderForCallSite(builder, tCallSiteInvokeName);
-
 
             var tConvertGet = emitInfo.CallSiteConvertName;
 
@@ -1128,12 +1062,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 tPrefixedName = String.Format("{0}.{1}", info.DeclaringType.FullName, tPrefixedName);
             }
 
-
             var tMp = typeBuilder.DefineProperty(tPrefixedName, PropertyAttributes.None, CallingConventions.HasThis,
                 emitInfo.ResolveReturnType, emitInfo.ResolvedIndexParamTypes);
-
-
-
 
             //GetMethod
             var tGetMethodBuilder = typeBuilder.DefineMethod(tPrefixedGet,
@@ -1146,19 +1076,15 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                                                              emitInfo.ResolveReturnType,
                                                              emitInfo.ResolvedIndexParamTypes);
 
-
             if (!emitInfo.DefaultInterfaceImplementation)
             {
                 typeBuilder.DefineMethodOverride(tGetMethodBuilder, info.GetGetMethod());
             }
 
-
             if (info != null)
             {
                 foreach (var tParam in info.GetGetMethod().GetParameters())
                 {
-
-
                     tGetMethodBuilder.DefineParameter(tParam.Position + 1, AttributesForParam(tParam), tParam.Name);
                 }
             }
@@ -1171,6 +1097,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 setMethod,
                 emitInfo);
         }
+
         private abstract class EmitInfo
         {
             public string Name { get; set; }
@@ -1184,10 +1111,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
 
             private readonly Lazy<string> _callSiteName;
+
             public string CallSiteName
             {
                 get { return _callSiteName.Value; }
             }
+
             public bool NonRecursive { get; set; }
             public bool DefaultInterfaceImplementation { get; set; }
             public IEnumerable<string> ArgNames { get; set; }
@@ -1195,7 +1124,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             public Type ResolveReturnType { get; set; }
             public Type CallSiteType { get; set; }
             public Type ContextType { get; set; }
-
         }
 
         private class MethodEmitInfo : EmitInfo
@@ -1206,15 +1134,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 CallSiteConvertName = "Convert_Method";
             }
 
-
-
             public string CallSiteInvokeName { get; protected set; }
             public string CallSiteConvertName { get; protected set; }
 
             public Type CallSiteConvertFuncType { get; set; }
             public Type CallSiteInvokeFuncType { get; set; }
         }
-
 
         private static void EmitProperty(
             TypeBuilder typeBuilder,
@@ -1225,7 +1150,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             PropertyEmitInfo emitInfo
             )
         {
-
             if (emitInfo.ResolvedIndexParamTypes == null) throw new ArgumentNullException("emitInfo", "ResolvedIndexParams can't be null");
             var tIlGen = getMethodBuilder.GetILGenerator();
 
@@ -1236,7 +1160,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             //If we want to do recursive Interfaces we need to test the interface before we dynamically cast
             var tReturnLocal = tIlGen.DeclareLocal(tRecurse ? typeof(object) : emitInfo.ResolveReturnType);
-
 
             using (tIlGen.EmitBranchTrue(gen => gen.Emit(OpCodes.Ldsfld, tConvertCallsiteField)))
             {
@@ -1253,9 +1176,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 tIlGen.EmitCallsiteCreate(emitInfo.CallSiteInvokeGetFuncType);
                 tIlGen.Emit(OpCodes.Stsfld, tInvokeGetCallsiteField);
             }
-
-
-
 
             if (!tRecurse)
             {
@@ -1281,7 +1201,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
 
             tIlGen.EmitStoreLocation(tReturnLocal.LocalIndex);
-
 
             //If return type is interface and instance is not interface, try actlike
             if (tRecurse)
@@ -1318,8 +1237,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             if (setMethod != null)
             {
-
-
                 MethodAttributes tPublicPrivate = MethodAttributes.Public;
                 var tPrefixedSet = setMethod.Name;
                 if (!emitInfo.DefaultInterfaceImplementation)
@@ -1327,7 +1244,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                     tPublicPrivate = MethodAttributes.Private;
                     tPrefixedSet = String.Format("{0}.{1}", info.DeclaringType.FullName, tPrefixedSet);
                 }
-
 
                 var tSetMethodBuilder = typeBuilder.DefineMethod(tPrefixedSet,
                                                                  tPublicPrivate | MethodAttributes.SpecialName |
@@ -1376,7 +1292,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             if (info == null)
                 return null;
 
-
             var paramTypes = info.GetParameters().Select(it => it.ParameterType).ToArray();
             var returnType = typeof(void);
             if (info.ReturnParameter != null)
@@ -1405,6 +1320,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             }
             return null;
         }
+
         private static IEnumerable<Type> FlattenGenericParameters(Type type)
         {
             if (type.IsByRef || type.IsArray || type.IsPointer)
@@ -1429,7 +1345,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             {
                 tStartType = type.GetElementType();
             }
-
 
             if (tStartType.IsGenericType)
             {
@@ -1484,7 +1399,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             IEnumerable<Type> tTypeArguments = tList;
 
-
             var tDef = tFuncGeneric.GetGenericTypeDefinition();
 
             if (tDef.GetGenericArguments().Count() != tTypeArguments.Count())
@@ -1511,7 +1425,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             builder.DefineField(name, tReturnType, FieldAttributes.Static | FieldAttributes.Public);
             return tFuncType;
-
         }
 
         private static Type DefineCallsiteField(this TypeBuilder builder, string name, Type returnType, params Type[] argTypes)
@@ -1521,9 +1434,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
 
             builder.DefineField(name, tReturnType, FieldAttributes.Static | FieldAttributes.Public);
             return tFuncType;
-
         }
-
 
         /// <summary>
         /// Emits new delegate type of the call site func.
@@ -1548,16 +1459,11 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         {
             bool tIsFunc = returnType != typeof(void);
 
-
             var tList = new List<Type> { typeof(CallSite), typeof(object) };
             tList.AddRange(argTypes.Select(it => (it.IsNotPublic && !it.IsByRef) ? typeof(object) : it));
 
-
-
             lock (DelegateCacheLock)
             {
-
-
                 TypeHash tHash;
 
                 if ((tList.Any(it => it.IsByRef) || tList.Count > 16) && methodInfo != null)
@@ -1581,29 +1487,21 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 {
                     tType = GenerateFullDelegate(builder, returnType, tList, methodInfo);
 
-
                     _delegateCache[tHash] = tType;
                     return tType;
                 }
-
-
 
                 if (tIsFunc)
                     tList.Add(returnType);
 
                 var tFuncGeneric = Impromptu.GenericDelegateType(tList.Count, !tIsFunc);
 
-
                 var tFuncType = tFuncGeneric.MakeGenericType(tList.ToArray());
 
                 _delegateCache[tHash] = tFuncType;
 
                 return tFuncType;
-
             }
-
-
-
         }
 
         // ReSharper disable UnusedParameter.Local
@@ -1671,7 +1569,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             return param.Attributes;
         }
 
-
         ///<summary>
         /// Module Builder for buiding proxies
         ///</summary>
@@ -1681,10 +1578,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             {
                 if (_builder == null)
                 {
-
                     var access = AssemblyBuilderAccess.Run;
                     var tPlainName = "RazorEngine.Compilation.ImpromptuInterfaceDynamicAssembly";
-
 
                     GenerateAssembly(tPlainName, access, ref _ab, ref _builder);
                 }
@@ -1712,5 +1607,4 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             mb = ab.DefineDynamicModule("MainModule");
         }
     }
-
 }

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security;
-using System.Text;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Build
 {
 #if !SILVERLIGHT
-
-
 
     /// <summary>
     /// Support Deserializing the proxy since on separate runs of an executable
@@ -21,6 +17,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// Original Object
         /// </summary>
         public object Original;
+
         /// <summary>
         /// Intefaces
         /// </summary>
@@ -51,7 +48,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             var tType = BuildProxy.BuildType(Context, tInterfaces.First(), tInterfaces.Skip(1).ToArray());
             return Impromptu.InitializeProxy(tType, Original, tInterfaces);
         }
-
     }
+
 #endif
 }

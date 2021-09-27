@@ -6,6 +6,7 @@
     public interface ITemplateManager
     {
         #region Methods
+
         /// <summary>
         /// Resolves the template with the specified key.
         /// </summary>
@@ -25,7 +26,7 @@
         /// </remarks>
         /// <param name="name">The name of the template</param>
         /// <param name="resolveType">how the template is resolved</param>
-        /// <param name="context">gets the context for the current resolve operation. 
+        /// <param name="context">gets the context for the current resolve operation.
         /// Which template is resolving another template? (null = we search a global template)
         /// </param>
         /// <returns>the key for the template</returns>
@@ -38,6 +39,6 @@
         /// <param name="source"></param>
         void AddDynamic(ITemplateKey key, ITemplateSource source);
 
-        #endregion
+        #endregion Methods
     }
 }

@@ -1,18 +1,18 @@
 ﻿namespace RazorEngine.Configuration
 {
+    using Compilation;
+    using Microsoft.AspNetCore.Razor.Language;
+    using RazorEngine.Compilation.ReferenceResolver;
     using System;
     using System.Collections.Generic;
-
-    using Compilation;
-    using Compilation.Inspectors;
+    using System.Security;
     using Templating;
     using Text;
-    using RazorEngine.Compilation.ReferenceResolver;
-    using System.Security;
-    using Microsoft.AspNetCore.Razor.Language;
+
 #if !NO_CONFIGURATION
     using RazorEngine.Configuration.Xml;
 #endif
+
     /// <summary>
     /// Provides a default implementation of a template service configuration.
     /// </summary>
@@ -23,6 +23,7 @@
         private ITemplateResolver resolver;
 #pragma warning restore 0618 // Backwards Compat.
 #endif
+
         #region Constructor
 
         /// <summary>
@@ -32,19 +33,9 @@
         public TemplateServiceConfiguration()
         {
             Activator = new DefaultActivator();
-            CompilerServiceFactory =
-#if RAZOR4
-              new Roslyn.RoslynCompilerServiceFactory();
-#else
-                new DefaultCompilerServiceFactory();
-#endif
-            EncodedStringFactory = new HtmlEncodedStringFactory();
+            CompilerServiceFactory = new Roslyn.RoslynCompilerServiceFactory();
 
-#if !RAZOR4
-#pragma warning disable 0618 // Backwards Compat.
-            CodeInspectors = new List<ICodeInspector>();
-#pragma warning restore 0618 // Backwards Compat.
-#endif
+            EncodedStringFactory = new HtmlEncodedStringFactory();
 
             ReferenceResolver = new UseCurrentAssembliesReferenceResolver();
             CachingProvider = new DefaultCachingProvider();
@@ -53,8 +44,8 @@
 
             Namespaces = new HashSet<string>
                              {
-                                 "System", 
-                                 "System.Collections.Generic", 
+                                 "System",
+                                 "System.Collections.Generic",
                                  "System.Linq"
                              };
 #if NO_CONFIGURATION
@@ -66,9 +57,11 @@
                            : config.DefaultLanguage;
 #endif
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets or sets the activator.
         /// </summary>
@@ -83,10 +76,10 @@
         /// Loads all dynamic assemblies with Assembly.Load(byte[]).
         /// This prevents temp files from being locked (which makes it impossible for RazorEngine to delete them).
         /// At the same time this completely shuts down any sandboxing/security.
-        /// Use this only if you have a limited amount of static templates (no modifications on rumtime), 
+        /// Use this only if you have a limited amount of static templates (no modifications on rumtime),
         /// which you fully trust and when a seperate AppDomain is no solution for you!.
         /// This option will also hurt debugging.
-        /// 
+        ///
         /// OK, YOU HAVE BEEN WARNED.
         /// </summary>
         public bool DisableTempFileLocking { get; set; }
@@ -96,22 +89,6 @@
         /// </summary>
         public Type BaseTemplateType { get; set; }
 
-#if !RAZOR4
-#pragma warning disable 0618 // Backwards Compat.
-        /// <summary>
-        /// Gets the set of code inspectors.
-        /// </summary>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        IEnumerable<ICodeInspector> ITemplateServiceConfiguration.CodeInspectors { get { return CodeInspectors; } }
-        
-        /// <summary>
-        /// Gets the set of code inspectors.
-        /// </summary>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        public IList<ICodeInspector> CodeInspectors { get; private set; }
-#pragma warning restore 0618 // Backwards Compat.
-#endif
-        
         /// <summary>
         /// Gets or sets the reference resolver
         /// </summary>
@@ -146,30 +123,14 @@
         /// Gets or sets the collection of namespaces.
         /// </summary>
         public ISet<string> Namespaces { get; set; }
-#if !NO_CONFIGURATION
-        /// <summary>
-        /// Gets or sets the template resolver.
-        /// </summary>
-        [Obsolete("Please use the TemplateManager property instead")]
-        public ITemplateResolver Resolver { 
-            get { 
-                return resolver;
-            } 
-            set { 
-                resolver = value;
-                if (value != null)
-                {
-                    TemplateManager = new WrapperTemplateManager(value);
-                }
-            } 
-        }
-#endif
+
         /// <summary>
         /// Gets or sets the template resolver.
         /// </summary>
         public ITemplateManager TemplateManager { get; set; }
 
 #pragma warning disable CS0618 // Type or member is obsolete
+
         /// <summary>
         /// Callback to register custom Model directives or configure the razor engine builder in another form.
         /// </summary>
@@ -177,7 +138,9 @@
         /// An callback that receives the builder
         /// </value>
         public Action<IRazorEngineBuilder> ConfigureCompilerBuilder { get; set; }
+
 #pragma warning restore CS0618 // Type or member is obsolete
-        #endregion
+
+        #endregion Properties
     }
 }

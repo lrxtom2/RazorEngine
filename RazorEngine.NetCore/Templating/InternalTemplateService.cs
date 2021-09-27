@@ -1,11 +1,7 @@
 ﻿using RazorEngine.Configuration;
 using RazorEngine.Text;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -13,6 +9,7 @@ namespace RazorEngine.Templating
     {
         private readonly RazorEngineCore _service;
         private readonly ITemplateKey _template;
+
         public InternalTemplateService(RazorEngineCore service, ITemplateKey template)
         {
             Contract.Requires(service != null);
@@ -72,5 +69,4 @@ namespace RazorEngine.Templating
             return _service.CreateExecuteContext();
         }
     }
-
 }

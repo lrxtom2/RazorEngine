@@ -9,6 +9,7 @@
     public class InstanceContext
     {
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="InstanceContext"/>.
         /// </summary>
@@ -22,9 +23,11 @@
             Loader = loader;
             TemplateType = templateType;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets the type loader.
         /// </summary>
@@ -34,6 +37,7 @@
         /// Gets the template type.
         /// </summary>
         public Type TemplateType { get; private set; }
-        #endregion
+
+        #endregion Properties
     }
 }

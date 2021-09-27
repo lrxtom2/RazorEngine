@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RazorEngine.Templating
 {
     /// <summary>
-    /// A base implementation for <see cref="T:RazorEngine.Templating.ITemplateKey"/>. 
-    /// You only need to provide the <see cref="ITemplateKey.GetUniqueKeyString()"/> 
+    /// A base implementation for <see cref="T:RazorEngine.Templating.ITemplateKey"/>.
+    /// You only need to provide the <see cref="ITemplateKey.GetUniqueKeyString()"/>
     /// implementation which depends on the <see cref="ITemplateManager"/> implementation.
     /// </summary>
     [Serializable]
@@ -16,18 +13,20 @@ namespace RazorEngine.Templating
         /// <summary>
         /// See <see cref="ITemplateKey.Name"/>.
         /// </summary>
-        readonly string _name;
+        private readonly string _name;
+
         /// <summary>
         /// See <see cref="ITemplateKey.TemplateType"/>.
         /// </summary>
-        readonly ResolveType _resolveType;
+        private readonly ResolveType _resolveType;
+
         /// <summary>
         /// See <see cref="ITemplateKey.Context"/>.
         /// </summary>
-        readonly ITemplateKey _context;
+        private readonly ITemplateKey _context;
 
         /// <summary>
-        /// Create a new <see cref="BaseTemplateKey"/> instance. 
+        /// Create a new <see cref="BaseTemplateKey"/> instance.
         /// </summary>
         /// <param name="name">See <see cref="ITemplateKey.Name"/></param>
         /// <param name="resolveType">See <see cref="ITemplateKey.TemplateType"/></param>
@@ -38,6 +37,7 @@ namespace RazorEngine.Templating
             _resolveType = resolveType;
             _context = context;
         }
+
         /// <summary>
         /// See <see cref="ITemplateKey.Name"/>.
         /// </summary>
@@ -67,5 +67,4 @@ namespace RazorEngine.Templating
         /// </summary>
         public abstract string GetUniqueKeyString();
     }
-
 }

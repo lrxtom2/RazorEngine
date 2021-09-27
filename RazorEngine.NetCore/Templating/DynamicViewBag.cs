@@ -12,9 +12,12 @@
     public class DynamicViewBag : DynamicObject
     {
         #region Fields
-        private readonly IDictionary<string, object> _dict = 
+
+        private readonly IDictionary<string, object> _dict =
             new System.Collections.Generic.Dictionary<string, object>();
-        #endregion
+
+        #endregion Fields
+
         /// <summary>
         /// Create a new DynamicViewBag.
         /// </summary>
@@ -41,21 +44,7 @@
         {
         }
 
-
         #region Methods
-
-        /// <summary>
-        /// Add the given dictionary to the current DynamicViewBag
-        /// </summary>
-        /// <param name="valueDictionary"></param>
-        [Obsolete("Use the generic AddDictionary overload instead")]
-        public void AddDictionaryValues(System.Collections.IDictionary valueDictionary)
-        {
-            foreach (DictionaryEntry item in valueDictionary)
-            {
-                _dict.Add(item.Key.ToString(), item.Value);
-            }
-        }
 
         /// <summary>
         /// Adds the given dictionary to the current DynamicViewBag instance.
@@ -70,43 +59,11 @@
         }
 
         /// <summary>
-        /// Add the given dictionary to the current DynamicViewBag
-        /// </summary>
-        /// <param name="valueDictionary"></param>
-        [Obsolete("Use the generic AddDictionary overload instead")]
-        public void AddDictionaryValuesEx(IDictionary<string, object> valueDictionary)
-        {
-            AddDictionary(valueDictionary);
-        }
-
-        /// <summary>
-        /// Adds the given list by evaluating the given property name.
-        /// </summary>
-        /// <param name="valueList"></param>
-        /// <param name="keyPropertyName"></param>
-        [Obsolete("Use the generic AddDictionary or AddValue overload instead")]
-        public void AddListValues(IList valueList, string keyPropertyName)
-        {
-            foreach (var item in valueList)
-            {
-                var t = item.GetType();
-                var prop = t.GetProperty(keyPropertyName);
-                if (prop == null)
-                {
-                    throw new InvalidOperationException(
-                        string.Format("Property {0} was not found in {1}", keyPropertyName, t));
-                }
-                var indx = prop.GetValue(item, null);
-                _dict.Add(indx.ToString(), item);
-            }
-        }
-
-        /// <summary>
         /// Adds a single value.
         /// </summary>
         /// <param name="propertyName"></param>
         /// <param name="value"></param>
-        public void AddValue(string propertyName, object value) 
+        public void AddValue(string propertyName, object value)
         {
             _dict.Add(propertyName, value);
         }
@@ -151,6 +108,7 @@
 
             return true;
         }
-        #endregion
+
+        #endregion Methods
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace RazorEngine.Templating
 {
     using System;
-    using System.Diagnostics.Contracts;
     using System.Globalization;
     using System.IO;
 
@@ -11,10 +10,13 @@
     public class TemplateWriter
     {
         #region Fields
+
         private readonly Action<TextWriter> writerDelegate;
-        #endregion
+
+        #endregion Fields
 
         #region Constructors
+
         /// <summary>
         /// Initialises a new instance of <see cref="TemplateWriter"/>.
         /// </summary>
@@ -25,9 +27,11 @@
 
             writerDelegate = writer;
         }
-        #endregion
+
+        #endregion Constructors
 
         #region Methods
+
         /// <summary>
         /// Executes the write delegate and returns the result of this <see cref="TemplateWriter"/>.
         /// </summary>
@@ -49,6 +53,7 @@
         {
             writerDelegate(writer);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

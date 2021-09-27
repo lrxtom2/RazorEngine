@@ -1,9 +1,7 @@
 ﻿namespace RazorEngine.Configuration
 {
-    using System;
-
     using Compilation;
-    using Compilation.Inspectors;
+    using System;
     using Templating;
     using Text;
 
@@ -13,6 +11,7 @@
     public interface IConfigurationBuilder
     {
         #region Methods
+
         /// <summary>
         /// Sets the activator.
         /// </summary>
@@ -33,24 +32,6 @@
         /// <param name="activator">The activator delegate.</param>
         /// <returns>The current configuration builder.</returns>
         IConfigurationBuilder ActivateUsing(Func<InstanceContext, ITemplate> activator);
-
-#if !RAZOR4
-        /// <summary>
-        /// Adds the specified code inspector.
-        /// </summary>
-        /// <typeparam name="TInspector">The code inspector type.</typeparam>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        IConfigurationBuilder AddInspector<TInspector>() where TInspector : ICodeInspector, new();
-
-        /// <summary>
-        /// Adds the specified code inspector.
-        /// </summary>
-        /// <param name="inspector">The code inspector.</param>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        IConfigurationBuilder AddInspector(ICodeInspector inspector);
-#endif
 
         /// <summary>
         /// Sets the compiler service factory.
@@ -80,30 +61,14 @@
         /// <typeparam name="TEncodedStringFactory">The encoded string factory type.</typeparam>
         /// <returns>The current configuration builder.</returns>
         IConfigurationBuilder EncodeUsing<TEncodedStringFactory>() where TEncodedStringFactory : IEncodedStringFactory, new();
-#if !NO_CONFIGURATION
-        /// <summary>
-        /// Sets the resolve used to locate unknown templates.
-        /// </summary>
-        /// <typeparam name="TResolver">The resolve type.</typeparam>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("Please use ManageUsing instead")]
-        IConfigurationBuilder ResolveUsing<TResolver>() where TResolver : ITemplateResolver, new();
-#endif
+
         /// <summary>
         /// Sets the manager used to locate unknown templates.
         /// </summary>
         /// <typeparam name="TManager">The manager type.</typeparam>
         /// <returns>The current configuration builder.</returns>
         IConfigurationBuilder ManageUsing<TManager>() where TManager : ITemplateManager, new();
-#if !NO_CONFIGURATION
-        /// <summary>
-        /// Sets the resolver used to locate unknown templates.
-        /// </summary>
-        /// <param name="resolver">The resolver instance to use.</param>
-        /// <returns>The current configuration builder.</returns>
-        [Obsolete("Please use ManageUsing instead")]
-        IConfigurationBuilder ResolveUsing(ITemplateResolver resolver);
-#endif
+
         /// <summary>
         /// Sets the manager used to locate unknown templates.
         /// </summary>
@@ -176,6 +141,7 @@
         /// <param name="encoding">The encoding.</param>
         /// <returns>The current configuration builder.</returns>
         IConfigurationBuilder WithEncoding(Encoding encoding);
-        #endregion
+
+        #endregion Methods
     }
 }

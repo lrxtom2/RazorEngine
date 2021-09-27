@@ -14,6 +14,7 @@
         private readonly Action<IEnumerable<CompilerReference>> _addReferences;
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="TypeContext"/>.
         /// </summary>
@@ -37,9 +38,11 @@
             ClassName = className;
             Namespaces = namespaces;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets the class name.
         /// </summary>
@@ -75,6 +78,7 @@
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
+
         /// <summary>
         /// Callback to register custom Model directives or configure the razor engine builder in another form.
         /// </summary>
@@ -82,8 +86,9 @@
         /// An callback that receives the builder
         /// </value>
         public Action<IRazorEngineBuilder> ConfigureCompilerBuilder { get; set; }
+
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        #endregion
+        #endregion Properties
     }
 }

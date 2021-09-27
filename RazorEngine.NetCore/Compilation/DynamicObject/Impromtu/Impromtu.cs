@@ -1,46 +1,37 @@
-﻿// 
+﻿//
 //  Copyright 2010  Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+using RazorEngine.Compilation.ImpromptuInterface.Build;
+using RazorEngine.Compilation.ImpromptuInterface.InvokeExt;
+using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using RazorEngine.Compilation.ImpromptuInterface.Build;
-using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
-using RazorEngine.Compilation.ImpromptuInterface.Internal;
-using RazorEngine.Compilation.ImpromptuInterface.InvokeExt;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
-using Microsoft.CSharp.RuntimeBinder;
 using System.Text.RegularExpressions;
+
 namespace RazorEngine.Compilation.ImpromptuInterface
 {
     using System;
-
-
-
 
     /// <summary>
     /// Main API
     /// </summary>
     public static class Impromptu
     {
-
-
         private static readonly Type ComObjectType;
 
         private static readonly dynamic ComBinder;
@@ -55,9 +46,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             }
             catch
             {
-
             }
         }
+
         /// <summary>
         /// Creates a cached call site at runtime.
         /// </summary>
@@ -77,7 +68,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                                               Type context, string[] argNames = null, bool staticContext = false,
                                               bool isEvent = false)
         {
-
             return InvokeHelper.CreateCallSite(delegateType, binder.GetType(), InvokeHelper.Unknown, () => binder, name, context, argNames,
                                                staticContext,
                                                isEvent);
@@ -94,7 +84,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// <param name="staticContext">if set to <c>true</c> [static context].</param>
         /// <param name="isEvent">if set to <c>true</c> [is event].</param>
         /// <returns></returns>
-        /// /// 
+        /// ///
         /// <example>
         /// Unit test that exhibits usage
         /// <code><![CDATA[
@@ -153,7 +143,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// <param name="name">The name. Can be a string it will be implicitly converted</param>
         /// <param name="args">The args.</param>
         /// <returns> The result</returns>
-        /// <example>   
+        /// <example>
         /// Unit test that exhibits usage:
         /// <code>
         /// <![CDATA[
@@ -180,7 +170,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                                                      ref tCallSite);
         }
 
-
         /// <summary>
         /// Invokes the binary operator.
         /// </summary>
@@ -194,66 +183,92 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             {
                 case ExpressionType.Add:
                     return leftArg + rightArg;
+
                 case ExpressionType.AddAssign:
                     leftArg += rightArg;
                     return leftArg;
+
                 case ExpressionType.AndAssign:
                     leftArg &= rightArg;
                     return leftArg;
+
                 case ExpressionType.Divide:
                     return leftArg / rightArg;
+
                 case ExpressionType.DivideAssign:
                     leftArg /= rightArg;
                     return leftArg;
+
                 case ExpressionType.Equal:
                     return leftArg == rightArg;
+
                 case ExpressionType.ExclusiveOr:
                     return leftArg ^ rightArg;
+
                 case ExpressionType.ExclusiveOrAssign:
                     leftArg ^= rightArg;
                     return leftArg;
+
                 case ExpressionType.GreaterThan:
                     return leftArg > rightArg;
+
                 case ExpressionType.GreaterThanOrEqual:
                     return leftArg >= rightArg;
+
                 case ExpressionType.LeftShift:
                     return leftArg << rightArg;
+
                 case ExpressionType.LeftShiftAssign:
                     leftArg <<= rightArg;
                     return leftArg;
+
                 case ExpressionType.LessThan:
                     return leftArg < rightArg;
+
                 case ExpressionType.LessThanOrEqual:
                     return leftArg <= rightArg;
+
                 case ExpressionType.Modulo:
                     return leftArg % rightArg;
+
                 case ExpressionType.ModuloAssign:
                     leftArg %= rightArg;
                     return leftArg;
+
                 case ExpressionType.Multiply:
                     return leftArg * rightArg;
+
                 case ExpressionType.MultiplyAssign:
                     leftArg *= rightArg;
                     return leftArg;
+
                 case ExpressionType.NotEqual:
                     return leftArg != rightArg;
+
                 case ExpressionType.OrAssign:
                     leftArg |= rightArg;
                     return leftArg;
+
                 case ExpressionType.RightShift:
                     return leftArg >> rightArg;
+
                 case ExpressionType.RightShiftAssign:
                     leftArg >>= rightArg;
                     return leftArg;
+
                 case ExpressionType.Subtract:
                     return leftArg - rightArg;
+
                 case ExpressionType.SubtractAssign:
                     leftArg -= rightArg;
                     return leftArg;
+
                 case ExpressionType.Or:
                     return leftArg | rightArg;
+
                 case ExpressionType.And:
                     return leftArg & rightArg;
+
                 default:
                     throw new ArgumentException("Unsupported Operator", "op");
             }
@@ -271,12 +286,16 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             {
                 case ExpressionType.Not:
                     return !arg;
+
                 case ExpressionType.Negate:
                     return -arg;
+
                 case ExpressionType.Decrement:
                     return --arg;
+
                 case ExpressionType.Increment:
                     return ++arg;
+
                 default:
                     throw new ArgumentException("Unsupported Operator", "op");
             }
@@ -300,7 +319,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             return InvokeHelper.InvokeDirectCallSite(target, args, tArgNames, tContext, tStaticContext, ref tCallSite);
         }
 
-
         /// <summary>
         /// Dynamically Invokes indexer using the DLR.
         /// </summary>
@@ -319,7 +337,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             return InvokeHelper.InvokeGetIndexCallSite(target, indexes, tArgNames, tContext, tStaticContext,
                                                        ref tCallSite);
         }
-
 
         /// <summary>
         /// Convenience version of InvokeSetIndex that separates value and indexes.
@@ -411,7 +428,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             InvokeHelper.InvokeDirectActionCallSite(target, args, tArgNames, tContext, tStaticContext, ref tCallSite);
         }
 
-
         /// <summary>
         /// Dynamically Invokes a set member using the DLR.
         /// </summary>
@@ -442,10 +458,10 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             target = target.GetTargetContext(out tContext, out tStaticContext);
             tContext = tContext.FixContext();
 
-
             CallSite tCallSite = null;
             return InvokeHelper.InvokeSetCallSite(target, name, value, tContext, tStaticContext, ref tCallSite);
         }
+
 #if DISABLED
         /// <summary>
         /// Invokes the set on the end of a property chain.
@@ -457,7 +473,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         {
             var tProperties = _chainRegex.FluentMatches(propertyChain).ToList();
             var tGetProperties = tProperties.Take(tProperties.Count - 1);
-
 
             var tTarget = target;
             foreach (var tProperty in tGetProperties)
@@ -493,11 +508,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 
             throw new Exception(string.Format("Could Not Parse :'{0}'", propertyChain));
         }
-
-
-
-
-
 
         private static readonly dynamic _invokeSetAll = new InvokeSetters();
         /// <summary>
@@ -561,12 +571,15 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             CallSite tSite = null;
             return InvokeHelper.InvokeGetCallSite(target, name, tContext, tStaticContext, ref tSite);
         }
+
 #if SILVERLIGHT
   private static readonly Regex _chainRegex
            = new Regex(@"((\.?(?<Getter>\w+))|(\[(?<IntIndexer>\d+)\])|(\['(?<StringIndexer>\w+)'\]))");
 #else
+
         private static readonly Regex _chainRegex
                  = new Regex(@"((\.?(?<Getter>\w+))|(\[(?<IntIndexer>\d+)\])|(\['(?<StringIndexer>\w+)'\]))", RegexOptions.Compiled);
+
 #endif
 #if DISABLED
         /// <summary>
@@ -602,7 +615,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 
         /// <summary>
         /// Determines whether the specified name on target is event. This allows you to know whether to InvokeMemberAction
-        ///  add_{name} or a combo of {invokeget, +=, invokeset} and the corresponding remove_{name} 
+        ///  add_{name} or a combo of {invokeget, +=, invokeset} and the corresponding remove_{name}
         /// or a combon of {invokeget, -=, invokeset}
         /// </summary>
         /// <param name="target">The target.</param>
@@ -618,17 +631,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             tContext = tContext.FixContext();
             CallSite tCallSite = null;
             return InvokeHelper.InvokeIsEventCallSite(target, name, tContext, ref tCallSite);
-        }
-        /// <summary>
-        /// Invokes add assign with correct behavior for events.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        [Obsolete("Use InvokeAddAssignMember")]
-        public static void InvokeAddAssign(object target, string name, object value)
-        {
-            InvokeAddAssignMember(target, name, value);
         }
 
         /// <summary>
@@ -660,17 +662,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// <param name="target">The target.</param>
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
-        [Obsolete("use InvokeSubtractAssignMember instead")]
-        public static void InvokeSubtractAssign(object target, string name, object value)
-        {
-            InvokeSubtractAssignMember(target, name, value);
-        }
-        /// <summary>
-        /// Invokes subtract assign with correct behavior for events.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
         public static void InvokeSubtractAssignMember(object target, string name, object value)
         {
             Type context;
@@ -682,14 +673,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 
             args = Util.GetArgsAndNames(args, out argNames);
 
-
             CallSite callSiteIsEvent = null;
             CallSite callSiteRemove = null;
             CallSite callSiteGet = null;
             CallSite callSiteSet = null;
 
-
-            InvokeHelper.InvokeSubtractAssignCallSite(target, name, args, argNames, context, staticContext, ref callSiteIsEvent, ref callSiteRemove, ref callSiteGet, ref  callSiteSet);
+            InvokeHelper.InvokeSubtractAssignCallSite(target, name, args, argNames, context, staticContext, ref callSiteIsEvent, ref callSiteRemove, ref callSiteGet, ref callSiteSet);
         }
 
         /// <summary>
@@ -707,7 +696,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 
             CallSite tCallSite = null;
             return InvokeHelper.InvokeConvertCallSite(target, @explicit, type, tContext, ref tCallSite);
-
         }
 
         internal static readonly IDictionary<Type, Delegate> CompiledExpressions = new Dictionary<Type, Delegate>();
@@ -733,7 +721,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                                          ? InvokeHelper.WrapAction(invokeableObject, tLength)
                                          : InvokeHelper.WrapFunc(tReturnType, invokeableObject, tLength);
 
-
             if (!InvokeHelper.IsActionOrFunc(delegateType) || tParams.Any(it => it.ParameterType.IsValueType))
             //Conditions that aren't contravariant;
             {
@@ -758,7 +745,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                 return tGetResult.DynamicInvoke(tBaseDelegate);
             }
             return tBaseDelegate;
-
         }
 
 #if DISABLED
@@ -766,12 +752,10 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         {
             if (target != null && !type.IsInstanceOfType(target) && DBNull.Value != target)
             {
-
                 var delegateConversion = CoerceToDelegate(target, type);
 
                 if (delegateConversion != null)
                     return delegateConversion;
-
 
                 if (type.IsInterface)
                 {
@@ -784,12 +768,10 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                         target = new ImpromptuGet(target);
                     }
 
-
                     target = Impromptu.DynamicActLike(target, type);
                 }
                 else
                 {
-
                     try
                     {
                         object tResult;
@@ -806,20 +788,16 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                             tReducedType = type.GetGenericArguments().First();
                         }
 
-
                         if (target is IConvertible && typeof(IConvertible).IsAssignableFrom(tReducedType) && !typeof(Enum).IsAssignableFrom(tReducedType))
                         {
-
                             target = Convert.ChangeType(target, tReducedType, Thread.CurrentThread.CurrentCulture);
-
                         }
                         else
                         {  //finally check type converter since it's the slowest.
-
 #if !SILVERLIGHT
                             var tConverter = TypeDescriptor.GetConverter(tReducedType);
 #else
-                                    
+
                                     TypeConverter tConverter = null;
                                     var tAttributes = tReducedType.GetCustomAttributes(typeof(TypeConverterAttribute), false);
                                     var tAttribute  =tAttributes.OfType<TypeConverterAttribute>().FirstOrDefault();
@@ -829,23 +807,20 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                                             Impromptu.InvokeConstructor(Type.GetType(tAttribute.ConverterTypeName));
                                     }
 
-                                  
 #endif
                             if (tConverter != null && tConverter.CanConvertFrom(target.GetType()))
                             {
                                 target = tConverter.ConvertFrom(target);
                             }
 
-#if SILVERLIGHT                                   
+#if SILVERLIGHT
                                     else if (target is string)
                                     {
-
                                         var tDC = new SilverConvertertDC(target as String);
                                         var tFE = new SilverConverterFE
                                         {
                                             DataContext = tDC
                                         };
-
 
                                         var tProp = SilverConverterFE.GetProperty(tReducedType);
 
@@ -877,19 +852,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 #endif
 
         /// <summary>
-        /// (Obsolete)Invokes the constructor. misspelling
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <param name="args">The args.</param>
-        /// <returns></returns>
-        [Obsolete("use InvokeConstructor, this was a spelling mistake")]
-        public static dynamic InvokeConstuctor(Type type, params object[] args)
-        {
-            return InvokeConstructor(type, args);
-        }
-
-
-        /// <summary>
         /// Invokes the constuctor.
         /// </summary>
         /// <param name="type">The type.</param>
@@ -907,10 +869,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             args = Util.GetArgsAndNames(args, out tArgNames);
             CallSite tCallSite = null;
 
-
             return InvokeHelper.InvokeConstructorCallSite(type, tValue, args, tArgNames, ref tCallSite);
         }
-
 
         /// <summary>
         /// FastDynamicInvoke extension method. Runs up to runs up to 20x faster than <see cref="System.Delegate.DynamicInvoke"/> .
@@ -922,7 +882,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         {
             if (del.Method.ReturnType == typeof(void))
             {
-
                 InvokeHelper.FastDynamicInvokeAction(del, args);
                 return null;
             }
@@ -942,7 +901,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
                 throw new ArgumentException(String.Format("{0} only handle at  most {1} parameters", returnVoid ? "Action" : "Func", returnVoid ? 16 : 17), "paramCount");
             if (tParamCount < 0)
                 throw new ArgumentException(String.Format("{0} must have at least {1} parameter(s)", returnVoid ? "Action" : "Func", returnVoid ? 0 : 1), "paramCount");
-
 
             return returnVoid
                 ? InvokeHelper.ActionKinds[tParamCount]
@@ -970,7 +928,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             }
             else
             {
-
                 if (ComObjectType != null && ComObjectType.IsInstanceOfType(target))
                 {
                     tList.AddRange(ComBinder.GetDynamicDataMemberNames(target));
@@ -992,32 +949,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// </remarks>
         public static dynamic InvokeCallSite(CallSite callSite, object target, params object[] args)
         {
-
-
-            var tParameters = new List<object> { callSite, target };
-            tParameters.AddRange(args);
-
-            MulticastDelegate tDelegate = ((dynamic)callSite).Target;
-
-            return tDelegate.FastDynamicInvoke(tParameters.ToArray());
-        }
-
-        /// <summary>
-        /// Dynamically invokes a method determined by the CallSite binder and be given an appropriate delegate type
-        /// </summary>
-        /// <param name="callSite">The Callsite</param>
-        /// <param name="target">The target.</param>
-        /// <param name="args">The args.</param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Advanced use only. Use this method for serious custom invocation, otherwise there are other convenience methods such as
-        /// <see cref="InvokeMember"></see>, <see cref="InvokeGet"></see>, <see cref="InvokeSet"></see> and <see cref="InvokeMemberAction"></see>
-        /// </remarks>
-        [Obsolete("Use InvokeCallSite instead;")]
-        public static dynamic Invoke(CallSite callSite, object target, params object[] args)
-        {
-
-
             var tParameters = new List<object> { callSite, target };
             tParameters.AddRange(args);
 
@@ -1042,13 +973,10 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 
             var tProxy = BuildProxy.BuildType(tContext, typeof(TInterface), otherInterfaces);
 
-
-
             return
                 (TInterface)
                 InitializeProxy(tProxy, originalDynamic, new[] { typeof(TInterface) }.Concat(otherInterfaces));
         }
-
 
         /// <summary>
         /// Unwraps the act like proxy (if wrapped).
@@ -1057,7 +985,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// <returns></returns>
         public static dynamic UndoActLike(this object proxiedObject)
         {
-
             var actLikeProxy = proxiedObject as IActLikeProxy;
             if (actLikeProxy != null)
             {
@@ -1065,7 +992,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             }
             return proxiedObject;
         }
-
 
         /// <summary>
         /// Extension Method that Wraps an existing object with an Interface of what it is implicitly assigned to.
@@ -1077,7 +1003,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         {
             return new ActLikeCaster(originalDynamic, otherInterfaces);
         }
-
 
         /// <summary>
         /// Makes static methods for the passed in property spec, designed to be used with old api's that reflect properties.
@@ -1094,13 +1019,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface
 
             var tProxy = BuildProxy.BuildType(tContext, propertySpec);
 
-
-
             return
                 InitializeProxy(tProxy, originalDynamic, propertySpec: propertySpec);
         }
-
-
 
         /// <summary>
         /// Private helper method that initializes the proxy.
@@ -1115,32 +1036,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             var tProxy = (IActLikeProxyInitialize)Activator.CreateInstance(proxytype);
             tProxy.Initialize(original, interfaces, propertySpec);
             return tProxy;
-        }
-
-
-
-        /// <summary>
-        /// This Extension method is called off the calling context to perserve permissions with the object wrapped with an explicit interface definition.
-        /// </summary>
-        /// <typeparam name="TInterface">The type of the interface.</typeparam>
-        /// <param name="caller">The caller.</param>
-        /// <param name="originalDynamic">The original dynamic.</param>
-        /// <param name="otherInterfaces">The other interfaces.</param>
-        /// <returns></returns>
-        /// <example>
-        /// UnitTest That describes usage
-        /// <code>
-        /// <![CDATA[
-        ///     var tTest = new TestWithPrivateMethod();
-        ///     var tNonExposed = this.CallActLike<IExposePrivateMethod>(tTest);
-        ///     Assert.Throws<RuntimeBinderException>(() => tNonExposed.Test());
-        /// ]]>
-        /// </code>
-        /// </example>
-        [Obsolete("Using InvokeContext wrapper to change permission context from target")]
-        public static TInterface CallActLike<TInterface>(this object caller, object originalDynamic, params Type[] otherInterfaces) where TInterface : class
-        {
-            return originalDynamic.WithContext(caller).ActLike<TInterface>(otherInterfaces);
         }
 
         /// <summary>
@@ -1171,37 +1066,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             var tProxy = BuildProxy.BuildType(tContext, otherInterfaces.First(), otherInterfaces.Skip(1).ToArray());
 
             return InitializeProxy(tProxy, originalDynamic, otherInterfaces);
-
-        }
-
-        /// <summary>
-        /// This Extension method is called off the calling context to perserve permissions with the object wrapped with an explicit interface definition.
-        /// </summary>
-        /// <param name="caller">The caller.</param>
-        /// <param name="originalDynamic">The original dynamic.</param>
-        /// <param name="otherInterfaces">The other interfaces.</param>
-        /// <returns></returns>
-        [Obsolete("Using WithContext() wrapper to change permission context from target")]
-        public static dynamic CallDynamicActLike(this object caller, object originalDynamic, params Type[] otherInterfaces)
-        {
-
-            return DynamicActLike(originalDynamic.WithContext(caller), otherInterfaces);
-
-        }
-
-
-        /// <summary>
-        /// Chainable Linq to Objects Method, allows you to wrap a list of objects, and preserve method permissions with a caller, with an Explict interface defintion
-        /// </summary>
-        /// <typeparam name="TInterface">The type of the interface.</typeparam>
-        /// <param name="originalDynamic">The original dynamic.</param>
-        /// <param name="caller">The caller.</param>
-        /// <param name="otherInterfaces">The other interfaces.</param>
-        /// <returns></returns>
-        [Obsolete("Using WithContext() wrapper to change permission context from target")]
-        public static IEnumerable<TInterface> AllCallActLike<TInterface>(this IEnumerable<object> originalDynamic, object caller, params Type[] otherInterfaces) where TInterface : class
-        {
-            return originalDynamic.Select(it => it.WithContext(caller).ActLike<TInterface>(otherInterfaces));
         }
 
 #if SILVERLIGHT5
@@ -1215,7 +1079,5 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             return new ImpromptuRuntimeType(target.GetType(), target);
         }
 #endif
-
     }
-
 }

@@ -1,25 +1,15 @@
-﻿using RazorEngine.Compilation;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Emit;
+using RazorEngine.Compilation;
 using RazorEngine.Compilation.ReferenceResolver;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-#if RAZOR4
-using Microsoft.AspNetCore.Razor;
-#else
-using System.Web.Razor.Parser;
-using System.Web.Razor;
-#endif
-using Microsoft.CodeAnalysis.Text;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using Microsoft.CodeAnalysis.Emit;
-
 
 namespace RazorEngine.Roslyn.CSharp
 {
@@ -64,6 +54,7 @@ namespace RazorEngine.Roslyn.CSharp
         protected class RazorEngineSourceReferenceResolver : SourceReferenceResolver
         {
             private string _sourceCodeFile;
+
             /// <summary>
             /// Constructs a new RazorEngineSourceReferenceResolver instance.
             /// </summary>
@@ -155,7 +146,6 @@ namespace RazorEngine.Roslyn.CSharp
         public RoslynCompilerServiceBase()
             : base()
         {
-
         }
 
         /// <summary>

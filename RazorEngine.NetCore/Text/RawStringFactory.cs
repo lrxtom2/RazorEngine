@@ -6,6 +6,7 @@
     public class RawStringFactory : IEncodedStringFactory
     {
         #region Methods
+
         /// <summary>
         /// Creates a <see cref="IEncodedString"/> instance for the specified raw string.
         /// </summary>
@@ -23,10 +24,11 @@
         /// <returns>An instance of <see cref="IEncodedString"/>.</returns>
         public IEncodedString CreateEncodedString(object value)
         {
-            return (value == null) 
+            return (value == null)
                 ? new RawString(string.Empty)
                 : new RawString(value.ToString());
         }
-        #endregion
+
+        #endregion Methods
     }
 }

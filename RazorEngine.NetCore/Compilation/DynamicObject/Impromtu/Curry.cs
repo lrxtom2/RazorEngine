@@ -1,27 +1,19 @@
-﻿// 
+﻿//
 //  Copyright 2011 Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Linq.Expressions;
-using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 //using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
-using System.Reflection;
 namespace RazorEngine.Compilation.ImpromptuInterface.Internal
 {
 #if DISABLED
@@ -32,7 +24,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Internal
     {
         private readonly object _target;
         private readonly int? _totalArgCount;
-
 
         internal Curry(object target, int? totalArgCount = null)
         {
@@ -54,7 +45,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Internal
 
             return result != null;
         }
-
 
 #if SILVERLIGHT5
 
@@ -95,14 +85,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Internal
         {
             var tCurrying = _target as PartialApplyInvocation;
 
-
             var curryResult = tCurrying != null
                 //If already currying append
                           ? new PartialApplyInvocation(tCurrying.Target,
                                          tCurrying.Args.Concat(Util.NameArgsIfNecessary(binder.CallInfo, args)).
                                              ToArray(), tCurrying.MemberName, tCurrying.TotalArgCount, tCurrying.InvocationKind)
                           : new PartialApplyInvocation(_target, Util.NameArgsIfNecessary(binder.CallInfo, args), String.Empty, _totalArgCount);
-
 
             result = curryResult;
             if (args.Length == curryResult.TotalArgCount)

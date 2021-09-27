@@ -1,20 +1,11 @@
 ﻿using RazorEngine.Configuration;
 using RazorEngine.Text;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-#if RAZOR4
 using System.Runtime.ExceptionServices;
-#endif
-using System.Security;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
-
     /// <summary>
     /// Defines a template service and the main API for running templates.
     /// Implements the <see cref="IRazorEngineService"/> interface.
@@ -26,14 +17,18 @@ namespace RazorEngine.Templating
         IRazorEngineService
     {
         #region Fields
+
         private readonly ITemplateServiceConfiguration _config;
+
         //private readonly RazorEngineCore _core;
         private readonly RazorEngineCore _core_with_cache;
 
         private bool disposed;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="TemplateService"/>
         /// </summary>
@@ -60,7 +55,6 @@ namespace RazorEngine.Templating
         internal RazorEngineService()
             : this(new TemplateServiceConfiguration()) { }
 
-
         /// <summary>
         /// Initialises a new instance of <see cref="TemplateService"/>
         /// </summary>
@@ -86,7 +80,8 @@ namespace RazorEngine.Templating
         {
             return new DynamicWrapperService(new RazorEngineService(config), false, config.AllowMissingPropertiesOnDynamic);
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
 
@@ -103,10 +98,9 @@ namespace RazorEngine.Templating
         /// </summary>
         internal ITemplateServiceConfiguration Configuration { get { return _config; } }
 
-        #endregion
+        #endregion Properties
 
         #region Methods
-
 
         /// <summary>
         /// Checks if a given template is already cached in the <see cref="ICachingProvider"/>.
@@ -135,6 +129,7 @@ namespace RazorEngine.Templating
         /// </summary>
         /// <param name="disposing">Are we explicitly disposing of this instance?</param>
 #if NO_APPDOMAIN
+
         protected virtual void Dispose(bool disposing)
 #else
         protected override void Dispose(bool disposing)
@@ -152,6 +147,7 @@ namespace RazorEngine.Templating
         }
 
 #if NO_APPDOMAIN
+
         /// <summary>
         /// Disposes the current instance.
         /// </summary>
@@ -168,6 +164,7 @@ namespace RazorEngine.Templating
         {
             Dispose(false);
         }
+
 #endif
 
         /// <summary>
@@ -268,7 +265,7 @@ namespace RazorEngine.Templating
         public void Run(ITemplateKey key, System.IO.TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null)
         {
             var template = GetCompiledTemplate(key, modelType, false);
-#if RAZOR4
+
             try
             {
                 _core_with_cache.RunTemplate(template, writer, model, viewBag).Wait();
@@ -277,9 +274,6 @@ namespace RazorEngine.Templating
             {
                 ExceptionDispatchInfo.Capture(ex.Flatten().InnerExceptions.First()).Throw();
             }
-#else
-            _core_with_cache.RunTemplate(template, writer, model, viewBag);
-#endif
         }
 
         /// <summary>
@@ -308,6 +302,7 @@ namespace RazorEngine.Templating
         {
             return _core_with_cache.GetKey(cacheName, resolveType, context);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

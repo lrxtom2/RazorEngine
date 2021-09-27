@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-//using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
+﻿//using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
 using RazorEngine.Compilation.ImpromptuInterface.Optimization;
+using System;
+using System.Dynamic;
+using System.Runtime.Serialization;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
 {
@@ -23,7 +19,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         public ImpromptuLateLibraryType(Type type)
             : base(type)
         {
-
         }
 
         /// <summary>
@@ -33,7 +28,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         public ImpromptuLateLibraryType(string typeName)
             : base(Type.GetType(typeName, false))
         {
-
         }
 
         /// <summary>
@@ -51,10 +45,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         public class ConstructorForward : DynamicObject, ICustomTypeProvider
         {
             private readonly Type _type;
+
             internal ConstructorForward(Type type)
             {
                 _type = type;
             }
+
             /// <summary>
             /// Tries to invoke.
             /// </summary>
@@ -67,6 +63,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
                 result = Impromptu.InvokeConstructor(_type, Util.NameArgsIfNecessary(binder.CallInfo, args));
                 return true;
             }
+
 #if SILVERLIGHT5
             public Type GetCustomType()
             {
@@ -97,8 +94,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
             }
         }
 
-
 #if !SILVERLIGHT
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImpromptuForwarder"/> class.
         /// </summary>

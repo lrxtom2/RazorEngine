@@ -1,56 +1,53 @@
 namespace RazorEngine.Templating
 {
     using System;
-    using System.Diagnostics;
-    using System.Diagnostics.Contracts;
     using System.IO;
-    using System.Security;
     using System.Text;
     using System.Threading.Tasks;
     using Text;
-#if RAZOR4
     using SectionAction = System.Action<System.IO.TextWriter>;
-#else
-    using SectionAction = System.Action;
-#endif
 
     /// <summary>
     /// Provides a base implementation of a template.
-    /// NOTE: This class is not serializable to prevent subtle errors 
+    /// NOTE: This class is not serializable to prevent subtle errors
     /// in user IActivator implementations which would break the sandbox.
     /// (because executed in the wrong <see cref="AppDomain"/>)
     /// </summary>
     public abstract class TemplateBase : ITemplate
     {
         #region Fields
+
         /// <summary>
         /// Because the old API (TemplateService) is designed in a way to make it impossible to init
         /// the model and the Viewbag at the same time (and because of backwards compatibility),
         /// we need to call the SetData method twice (only from within TemplateService so we can remove this bool once that has been removed).
-        /// 
+        ///
         /// But the secound call we only need to set the Viewbag, therefore we save the state in this bool.
         /// </summary>
         private bool modelInit = false;
+
         private dynamic viewBag = null;
 
-#if RAZOR4
         private AttributeInfo _attributeInfo;
-#endif
 
         /// <summary>
         /// The current context, filled when we are currently writing a template instance.
         /// </summary>
         protected ExecuteContext _context;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="TemplateBase"/>.
         /// </summary>
         protected TemplateBase() { }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets or sets the layout template name.
         /// </summary>
@@ -65,21 +62,7 @@ namespace RazorEngine.Templating
         /// Gets or sets the template service.
         /// </summary>
         public IInternalTemplateService InternalTemplateService { internal get; set; }
-#if !NO_CODEDOM
-        /// <summary>
-        /// Gets or sets the template service.
-        /// </summary>
-        [Obsolete("Only provided for backwards compatibility, use RazorEngine instead.")]
-        public ITemplateService TemplateService { get; set; }
-#endif
-#if RAZOR4
-#else
-        /// <summary>
-        /// Gets or sets the current <see cref="IRazorEngineService"/> instance.
-        /// </summary>
-        [Obsolete("Use the Razor property instead, this is obsolete as it makes it difficult to use the RazorEngine namespace within templates.")]
-        public IRazorEngineService RazorEngine { get { return Razor; } set { Razor = value; } }
-#endif
+
         /// <summary>
         /// Gets or sets the current <see cref="IRazorEngineService"/> instance.
         /// </summary>
@@ -94,9 +77,11 @@ namespace RazorEngine.Templating
         /// Gets the current writer.
         /// </summary>
         public TextWriter CurrentWriter { get { return _context.CurrentWriter; } }
-        #endregion
+
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Set the data for this template.
         /// </summary>
@@ -118,7 +103,6 @@ namespace RazorEngine.Templating
         /// <param name="model"></param>
         public virtual void SetModel(object model)
         {
-
         }
 
         /// <summary>
@@ -147,10 +131,8 @@ namespace RazorEngine.Templating
             // TODO: make TemplateWriter async?
             return new TemplateWriter(tw =>
                 instance.Run(
-                    InternalTemplateService.CreateExecuteContext(), tw)
-#if RAZOR4
-                    .Wait()
-#endif
+                    InternalTemplateService.CreateExecuteContext(), tw).Wait()
+
                     );
         }
 
@@ -170,11 +152,7 @@ namespace RazorEngine.Templating
         /// <summary>
         /// Executes the compiled template.
         /// </summary>
-#if RAZOR4
         public virtual Task ExecuteAsync() { return Task.FromResult(0); }
-#else
-        public virtual void Execute() { }
-#endif
 
         /// <summary>
         /// Returns the specified string as a raw string. This will ensure it is not encoded.
@@ -214,11 +192,8 @@ namespace RazorEngine.Templating
         /// <param name="context">The current execution context.</param>
         /// <param name="reader"></param>
         /// <returns>The merged result of the template.</returns>
-#if RAZOR4
         public async Task Run(ExecuteContext context, TextWriter reader)
-#else
-        void ITemplate.Run(ExecuteContext context, TextWriter reader)
-#endif
+
         {
             _context = context;
 
@@ -226,14 +201,11 @@ namespace RazorEngine.Templating
             using (var writer = new StringWriter(builder))
             {
                 _context.CurrentWriter = writer;
-#if RAZOR4
+
                 await ExecuteAsync();
-#else
-                Execute();
-#endif
+
                 writer.Flush();
                 _context.CurrentWriter = null;
-
 
                 if (Layout != null)
                 {
@@ -250,11 +222,7 @@ namespace RazorEngine.Templating
                     context.PushBody(body);
                     context.PushSections();
 
-#if RAZOR4
                     await layout.Run(context, reader);
-#else
-                    layout.Run(context, reader);
-#endif
                     return;
                 }
 
@@ -278,11 +246,9 @@ namespace RazorEngine.Templating
                 throw new ArgumentException("No section has been defined with name '" + name + "'");
 
             if (action == null)
-#if RAZOR4
+            {
                 action = (tw) => { };
-#else
-                action = () => { };
-#endif
+            }
 
             return new TemplateWriter(tw =>
             {
@@ -320,104 +286,6 @@ namespace RazorEngine.Templating
             helper.WriteTo(_context.CurrentWriter);
         }
 
-#if !RAZOR4
-        /// <summary>
-        /// Writes an attribute to the result.
-        /// </summary>
-        /// <param name="name">The name of the attribute.</param>
-        /// <param name="prefix"></param>
-        /// <param name="suffix"></param>
-        /// <param name="values"></param>
-        public virtual void WriteAttribute(string name, PositionTagged<string> prefix, PositionTagged<string> suffix, params AttributeValue[] values)
-        {
-            WriteAttributeTo(CurrentWriter, name, prefix, suffix, values);
-        }
-
-        /// <summary>
-        /// Writes an attribute to the specified <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="writer">The writer.</param>
-        /// <param name="name">The name of the attribute to be written.</param>
-        /// <param name="prefix"></param>
-        /// <param name="suffix"></param>
-        /// <param name="values"></param>
-        public virtual void WriteAttributeTo(TextWriter writer, string name, PositionTagged<string> prefix, PositionTagged<string> suffix, params AttributeValue[] values)
-        {
-            if (writer == null)
-                throw new ArgumentNullException(nameof(writer));
-
-            bool first = true;
-            bool wroteSomething = false;
-            if (values.Length == 0)
-            {
-                // Explicitly empty attribute, so write the prefix and suffix
-                WritePositionTaggedLiteral(writer, prefix);
-                WritePositionTaggedLiteral(writer, suffix);
-            }
-            else
-            {
-                for (int i = 0; i < values.Length; i++)
-                {
-                    AttributeValue attrVal = values[i];
-                    PositionTagged<object> val = attrVal.Value;
-
-                    bool? boolVal = null;
-                    if (val.Value is bool)
-                    {
-                        boolVal = (bool)val.Value;
-                    }
-
-                    if (val.Value != null && (boolVal == null || boolVal.Value))
-                    {
-                        string valStr = val.Value as string;
-                        string valToString = valStr;
-                        if (valStr == null)
-                        {
-                            valToString = val.Value.ToString();
-                        }
-                        if (boolVal != null)
-                        {
-                            Debug.Assert(boolVal.Value);
-                            valToString = name;
-                        }
-
-                        if (first)
-                        {
-                            WritePositionTaggedLiteral(writer, prefix);
-                            first = false;
-                        }
-                        else
-                        {
-                            WritePositionTaggedLiteral(writer, attrVal.Prefix);
-                        }
-
-                        if (attrVal.Literal)
-                        {
-                            WriteLiteralTo(writer, valToString);
-                        }
-                        else
-                        {
-                            if (val.Value is IEncodedString && boolVal == null)
-                            {
-                                WriteTo(writer, val.Value); // Write value
-                            }
-                            else
-                            {
-                                WriteTo(writer, valToString); // Write value
-                            }
-                        }
-                        wroteSomething = true;
-                    }
-                }
-                if (wroteSomething)
-                {
-                    WritePositionTaggedLiteral(writer, suffix);
-                }
-            }
-        }
-#endif
-
-#if RAZOR4
         /// <summary>
         /// Writes the specified attribute name to the result.
         /// </summary>
@@ -590,8 +458,6 @@ namespace RazorEngine.Templating
                 (value is bool && (bool)value);
         }
 
-#endif
-
         /// <summary>
         /// Writes the specified string to the result.
         /// </summary>
@@ -601,7 +467,6 @@ namespace RazorEngine.Templating
             WriteLiteralTo(_context.CurrentWriter, literal);
         }
 
-#if RAZOR4
         /// <summary>
         /// Writes the specified object to the result.
         /// </summary>
@@ -610,7 +475,6 @@ namespace RazorEngine.Templating
         {
             WriteLiteralTo(_context.CurrentWriter, literal);
         }
-#endif
 
         /// <summary>
         /// Writes a string literal to the specified <see cref="TextWriter"/>.
@@ -626,7 +490,6 @@ namespace RazorEngine.Templating
             writer.Write(literal);
         }
 
-#if RAZOR4
         /// <summary>
         /// Writes a string literal to the specified <see cref="TextWriter"/>.
         /// </summary>
@@ -642,7 +505,6 @@ namespace RazorEngine.Templating
                 WriteLiteralTo(writer, literal.ToString());
             }
         }
-#endif
 
         /// <summary>
         /// Writes a <see cref="PositionTagged{T}" /> literal to the result.
@@ -677,9 +539,8 @@ namespace RazorEngine.Templating
             }
         }
 
-#if RAZOR4
         /// <summary>
-        /// Writes the specified string to the result. 
+        /// Writes the specified string to the result.
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="value">The value to be written.</param>
@@ -690,7 +551,6 @@ namespace RazorEngine.Templating
 
             writer.Write(value);
         }
-#endif
 
         /// <summary>
         /// Writes the specfied template helper result to the specified writer.
@@ -704,25 +564,8 @@ namespace RazorEngine.Templating
             helper.WriteTo(writer);
         }
 
-#if !RAZOR4
-        /// <summary>
-        /// Resolves the specified path
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns>The resolved path.</returns>
-        public virtual string ResolveUrl(string path)
-        {
-            // TODO: Actually resolve the url
-            if (path.StartsWith("~"))
-            {
-                path = path.Substring(1);
-            }
-            return path;
-        }
-#endif
-#endregion
+        #endregion Methods
 
-#if RAZOR4
         private struct AttributeInfo
         {
             public AttributeInfo(
@@ -757,8 +600,5 @@ namespace RazorEngine.Templating
 
             public bool Suppressed { get; set; }
         }
-#endif
-
     }
-
 }

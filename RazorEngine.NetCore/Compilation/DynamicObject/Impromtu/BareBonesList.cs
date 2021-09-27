@@ -1,12 +1,12 @@
-﻿// 
+﻿//
 //  Copyright 2011 Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
         private int _addIndex;
 
         private int _length;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BareBonesList&lt;T&gt;"/> class.
@@ -86,7 +85,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             return GetEnumerator();
         }
 
-
         internal class BareBonesEnumerator : IEnumerator<T>
         {
             private T[] _list;
@@ -101,7 +99,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
             public void Dispose()
             {
-
             }
 
             public bool MoveNext()
@@ -125,8 +122,5 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 get { return Current; }
             }
         }
-
     }
-
-
 }

@@ -2,7 +2,7 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    
+
     using System.Security;
 
     /// <summary>
@@ -12,6 +12,7 @@
     public class DefaultCompilerServiceFactory : ICompilerServiceFactory
     {
         #region Methods
+
         /// <summary>
         /// Creates a <see cref="ICompilerService"/> that supports the specified language.
         /// </summary>
@@ -21,25 +22,9 @@
         [SecuritySafeCritical]
         public ICompilerService CreateCompilerService(Language language)
         {
-#if NO_CODEDOM
             return new Roslyn.RoslynCompilerServiceFactory().CreateCompilerService(language);
-#else
-            switch (language)
-            {
-                case Language.CSharp:
-                    return new CSharpDirectCompilerService();
-                case Language.VisualBasic:
-#if RAZOR4
-                    throw new NotSupportedException("Razor4 doesn't support VB.net apparently.");
-#else
-                    return new VBDirectCompilerService();
-#endif
-
-                default:
-                    throw new ArgumentException("Unsupported language: " + language);
-            }
-#endif
         }
-        #endregion
+
+        #endregion Methods
     }
 }

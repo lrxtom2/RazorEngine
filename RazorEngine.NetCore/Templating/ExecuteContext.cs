@@ -2,14 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.IO;
 
-#if RAZOR4
     using SectionAction = System.Action<System.IO.TextWriter>;
-#else
-    using SectionAction = System.Action;
-#endif
 
     /// <summary>
     /// Defines a context for tracking template execution.
@@ -17,6 +12,7 @@
     public class ExecuteContext
     {
         #region Constructors
+
         /// <summary>
         /// Creates a new instance of ExecuteContext.
         /// </summary>
@@ -24,34 +20,30 @@
         {
             _currentSectionStack.Push(new HashSet<string>());
         }
-        /// <summary>
-        /// DO NOT USE, throws NotSupportedException.
-        /// </summary>
-        /// <param name="viewbag">DO NOT USE, throws NotSupportedException.</param>
-        [Obsolete("RUNTIME FAILURE: This kind of usage is no longer supported.")]
-        public ExecuteContext(DynamicViewBag viewbag)
-        {
-            throw new NotSupportedException("This kind of usage is no longer supported!");
-        }
-        #endregion
+
+        #endregion Constructors
 
         #region Fields
+
         private readonly Stack<ISet<string>> _currentSectionStack = new Stack<ISet<string>>();
         private ISet<string> _currentSections = new HashSet<string>();
         private readonly IDictionary<string, Stack<SectionAction>> _definedSections = new Dictionary<string, Stack<SectionAction>>();
         private readonly Stack<TemplateWriter> _bodyWriters = new Stack<TemplateWriter>();
-        #endregion
+
+        #endregion Fields
 
         #region Properties
+
         /// <summary>
         /// Gets the current writer.
         /// </summary>
         //internal TextWriter CurrentWriter { get { return _writers.Peek(); } }
         internal TextWriter CurrentWriter { get; set; }
 
-        #endregion
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Defines a section used in layouts.
         /// </summary>
@@ -62,7 +54,7 @@
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("A name is required to define a section.");
             if (_currentSections.Contains(name))
-	            throw new ArgumentException("A section has already been defined with name '" + name + "'");
+                throw new ArgumentException("A section has already been defined with name '" + name + "'");
 
             _currentSections.Add(name);
             Stack<SectionAction> sectionStack;
@@ -103,23 +95,12 @@
                 var item = _definedSections[section].Pop();
                 poppedSections.Add(Tuple.Create(section, item));
             }
-#if RAZOR4
+
             inner(innerArg);
-#else
-            var oldWriter = CurrentWriter;
-            try
-            {
-                CurrentWriter = innerArg;
-                inner();
-            }
-            finally
-            {
-                CurrentWriter = oldWriter;
-            }
-#endif
+
             foreach (var item in poppedSections)
-	        {
-		        _definedSections[item.Item1].Push(item.Item2);
+            {
+                _definedSections[item.Item1].Push(item.Item2);
             }
             _currentSectionStack.Push(_currentSections);
             _currentSections = oldsections;
@@ -154,6 +135,7 @@
 
             _bodyWriters.Push(bodyWriter);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

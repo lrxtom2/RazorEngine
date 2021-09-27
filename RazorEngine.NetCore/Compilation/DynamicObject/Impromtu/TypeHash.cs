@@ -1,12 +1,12 @@
-﻿// 
+﻿//
 //  Copyright 2010  Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Build
 {
@@ -52,7 +51,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 return InformalInterface.SequenceEqual(other.InformalInterface);
             }
 
-
             return Types.SequenceEqual(other.Types);
         }
 
@@ -75,18 +73,16 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
             unchecked
             {
-
                 if (Types.Length > 16)
                 {
                     return Types.Length.GetHashCode();
                 }
-
 
                 var tReturn = Types.Aggregate(1, (current, type) => (current * 397) ^ type.GetHashCode());
 
@@ -138,12 +134,10 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         public TypeHash(IEnumerable<Type> moreTypes)
             : this(false, moreTypes.ToArray())
         {
-
         }
 
         private TypeHash()
         {
-
         }
 
         /// <summary>
@@ -159,8 +153,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             Types = new[] { type1 }.Concat(moreTypes.OrderBy(it => it.Name)).ToArray();
             InformalInterface = null;
         }
-
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TypeHash"/> class.
@@ -200,6 +192,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             return new TypeHash(moreTypes);
 #pragma warning restore 612,618
         }
+
         /// <summary>
         /// Creates the TypeHash
         /// </summary>
@@ -212,6 +205,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             return new TypeHash(type1, moreTypes);
 #pragma warning restore 612,618
         }
+
         /// <summary>
         /// Creates the TypeHash
         /// </summary>
@@ -224,6 +218,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
             return new TypeHash(type1, informalInterface);
 #pragma warning restore 612,618
         }
+
         /// <summary>
         /// Creates the TypeHash
         /// </summary>

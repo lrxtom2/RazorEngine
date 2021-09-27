@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -14,6 +11,7 @@ namespace RazorEngine.Templating
     public class ResolvePathTemplateManager : ITemplateManager
     {
         private readonly ReadOnlyCollection<string> layoutRoots;
+
         /// <summary>
         /// Initializes a new TemplateManager.
         /// </summary>

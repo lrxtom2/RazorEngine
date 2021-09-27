@@ -1,12 +1,7 @@
 ﻿namespace RazorEngine.Templating
 {
     using System;
-    using System.Collections.Generic;
-
-    using Configuration;
-    using Text;
     using System.IO;
-
 
     /// <summary>
     /// Defines the required contract for implementing a template service.
@@ -48,7 +43,7 @@
 
         /// <summary>
         /// Runs the given cached template.
-        /// When the cache does not contain the template 
+        /// When the cache does not contain the template
         /// it will be compiled and cached beforehand.
         /// </summary>
         /// <param name="key"></param>
@@ -68,5 +63,4 @@
         /// <param name="viewBag"></param>
         void Run(ITemplateKey key, TextWriter writer, Type modelType = null, object model = null, DynamicViewBag viewBag = null);
     }
-
 }

@@ -1,15 +1,13 @@
 ﻿namespace RazorEngine.Configuration
 {
+    using Compilation;
+    using Microsoft.AspNetCore.Razor.Language;
+    using RazorEngine.Compilation.ReferenceResolver;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
-
-    using Compilation;
-    using Compilation.Inspectors;
     using Templating;
     using Text;
-    using RazorEngine.Compilation.ReferenceResolver;
-    using Microsoft.AspNetCore.Razor.Language;
 
     /// <summary>
     /// Defines a fluent template service configuration
@@ -17,10 +15,13 @@
     public class FluentTemplateServiceConfiguration : ITemplateServiceConfiguration
     {
         #region Fields
+
         private readonly TemplateServiceConfiguration _innerConfig = new TemplateServiceConfiguration();
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="FluentTemplateServiceConfiguration"/>.
         /// </summary>
@@ -31,9 +32,11 @@
 
             config(new FluentConfigurationBuilder(_innerConfig));
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
+
         /// <summary>
         /// Gets or sets the activator.
         /// </summary>
@@ -41,7 +44,7 @@
         {
             get { return _innerConfig.Activator; }
         }
-        
+
         /// <summary>
         /// Gets or sets whether to allow missing properties on dynamic models.
         /// </summary>
@@ -54,10 +57,10 @@
         /// Loads all dynamic assemblies with Assembly.Load(byte[]).
         /// This prevents temp files from being locked (which makes it impossible for RazorEngine to delete them).
         /// At the same time this completely shuts down any sandboxing/security.
-        /// Use this only if you have a limited amount of static templates (no modifications on rumtime), 
+        /// Use this only if you have a limited amount of static templates (no modifications on rumtime),
         /// which you fully trust and when a seperate AppDomain is no solution for you!.
         /// This option will also hurt debugging.
-        /// 
+        ///
         /// OK, YOU HAVE BEEN WARNED.
         /// </summary>
         public bool DisableTempFileLocking
@@ -72,18 +75,7 @@
         {
             get { return _innerConfig.BaseTemplateType; }
         }
-        
-#if !RAZOR4
-        /// <summary>
-        /// Gets the set of code inspectors.
-        /// </summary>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        public IEnumerable<ICodeInspector> CodeInspectors
-        {
-            get { return _innerConfig.CodeInspectors; }
-        }
-#endif
-        
+
         /// <summary>
         /// Gets the reference resolver.
         /// </summary>
@@ -91,7 +83,6 @@
         {
             get { return _innerConfig.ReferenceResolver; }
         }
-
 
         /// <summary>
         /// Gets the caching provider.
@@ -140,16 +131,7 @@
         {
             get { return _innerConfig.Namespaces; }
         }
-#if !NO_CONFIGURATION
-        /// <summary>
-        /// Gets the resolver.
-        /// </summary>
-        [Obsolete("Please use the TemplateManager property instead")]
-        public ITemplateResolver Resolver
-        {
-            get { return _innerConfig.Resolver; }
-        }
-#endif
+
         /// <summary>
         /// Gets the template manager.
         /// </summary>
@@ -159,17 +141,19 @@
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-                              /// <summary>
-                              /// Callback to register custom Model directives or configure the razor engine builder in another form.
-                              /// </summary>
-                              /// <value>
-                              /// An callback that receives the builder
-                              /// </value>
+
+        /// <summary>
+        /// Callback to register custom Model directives or configure the razor engine builder in another form.
+        /// </summary>
+        /// <value>
+        /// An callback that receives the builder
+        /// </value>
         public Action<IRazorEngineBuilder> ConfigureCompilerBuilder
 #pragma warning restore CS0618 // Type or member is obsolete
         {
             get { return _innerConfig.ConfigureCompilerBuilder; }
         }
-        #endregion
+
+        #endregion Properties
     }
 }

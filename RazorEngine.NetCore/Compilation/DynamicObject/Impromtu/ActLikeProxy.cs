@@ -1,27 +1,25 @@
-﻿// 
+﻿//
 //  Copyright 2010  Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using RazorEngine.Compilation.ImpromptuInterface;
-using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
+
 //using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
-using RazorEngine.Compilation.ImpromptuInterface.Optimization;
 using System.Security;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Build
@@ -43,7 +41,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         void Initialize(dynamic original, IEnumerable<Type> interfaces = null, IDictionary<string, Type> informalInterface = null);
     }
 
-
     /// <summary>
     /// Base class of Emited ProxiesC:\Documents and Settings\jayt\My Documents\Visual Studio 2010\Projects\RazorEngine.Compilation.ImpromptuInterface\RazorEngine.Compilation.ImpromptuInterface\Optimization\
     /// </summary>
@@ -55,8 +52,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// </summary>
         public ActLikeProxy() : base(null)
         {
-
         }
+
         /// <summary>
         /// Returns the proxied object
         /// </summary>
@@ -95,7 +92,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                     tKnowOriginal.KnownPropertySpec = informalInterface;
             }
 
-
             //Uses standard lib component types to notify proxied object of interfaces.
             var serviceProvider = ActLikeProxyOriginal as IServiceProvider;
             if (serviceProvider != null)
@@ -106,12 +102,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 }
                 catch
                 {
-
                 }
             }
         }
-
-
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
@@ -146,7 +139,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {
@@ -170,12 +163,10 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                 GetType().GetCustomAttributes(typeof(ActLikeProxyAttribute), false).OfType<ActLikeProxyAttribute>().
                     FirstOrDefault();
 
-
             info.AddValue("Context",
                           tCustomAttr == null
                           ? null
                           : tCustomAttr.Context, typeof(Type));
-
 
             info.AddValue("Interfaces",
                       tCustomAttr == null
@@ -183,8 +174,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Build
                       : tCustomAttr.Interfaces, typeof(Type[]));
 
             info.AddValue("Original", (object)ActLikeProxyOriginal);
-
         }
+
 #endif
 
         /// <summary>

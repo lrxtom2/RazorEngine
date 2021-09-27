@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace RazorEngine.Templating
 {
     /// <summary>
@@ -21,7 +22,7 @@ namespace RazorEngine.Templating
         /// <param name="template">the resolved template</param>
         /// <returns>true if a template was found.</returns>
         /// <remarks>
-        /// Implementations MUST decide if they allow multiple model-types for the 
+        /// Implementations MUST decide if they allow multiple model-types for the
         /// same template key and SHOULD throw a exception when a template is requested with the wrong type!
         /// </remarks>
         bool TryRetrieveTemplate(ITemplateKey key, Type modelType, out ICompiledTemplate template);

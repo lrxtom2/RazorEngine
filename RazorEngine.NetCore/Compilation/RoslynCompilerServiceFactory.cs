@@ -1,12 +1,8 @@
 ﻿using RazorEngine.Compilation;
 using RazorEngine.Roslyn.CSharp;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Roslyn
 {
@@ -17,6 +13,7 @@ namespace RazorEngine.Roslyn
     public class RoslynCompilerServiceFactory : ICompilerServiceFactory
     {
         #region Methods
+
         /// <summary>
         /// Creates a <see cref="ICompilerService"/> that supports the specified language.
         /// </summary>
@@ -32,16 +29,12 @@ namespace RazorEngine.Roslyn
                     return new CSharpRoslynCompilerService();
 
                 case Language.VisualBasic:
-                    //#if RAZOR4
                     throw new NotSupportedException("Razor4 doesn't support VB.net apparently.");
-                //#else
-                //                    return new VBRoslynCompilerService();
-                //#endif
-
                 default:
                     throw new ArgumentException("Unsupported language: " + language);
             }
         }
-        #endregion
+
+        #endregion Methods
     }
 }

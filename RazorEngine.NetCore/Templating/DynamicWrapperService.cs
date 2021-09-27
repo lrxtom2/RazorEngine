@@ -1,9 +1,5 @@
 ﻿using RazorEngine.Compilation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -15,6 +11,7 @@ namespace RazorEngine.Templating
         private readonly IRazorEngineService _origin;
         private readonly bool _mustSerialize;
         private readonly bool _allowMissingPropertiesOnDynamic;
+
         public DynamicWrapperService(IRazorEngineService origin, bool mustSerialize, bool allowMissingPropertiesOnDynamic)
         {
             _origin = origin;
@@ -52,7 +49,7 @@ namespace RazorEngine.Templating
             }
             if (CompilerServicesUtility.IsAnonymousTypeRecursive(modelType))
             {
-                throw new ArgumentException(@"We cannot support anonymous model types as those are internal! 
+                throw new ArgumentException(@"We cannot support anonymous model types as those are internal!
 However you can just use 'dynamic' (modelType == null) and we try to make it work for you (at the cost of performance).");
             }
         }
@@ -83,7 +80,7 @@ However you can just use 'dynamic' (modelType == null) and we try to make it wor
             }
             return result;
         }
-        
+
         public bool IsTemplateCached(ITemplateKey key, Type modelType)
         {
             CheckModelType(modelType);

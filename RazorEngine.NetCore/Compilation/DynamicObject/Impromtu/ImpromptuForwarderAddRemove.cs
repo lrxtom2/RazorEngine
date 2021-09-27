@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
+﻿namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
 {
-    class ImpromptuForwarderAddRemove
+    internal class ImpromptuForwarderAddRemove
     {
         /// <summary>
         /// Implements the operator +.
@@ -46,6 +41,5 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         /// </summary>
         /// <value><c>true</c> if this instance is adding; otherwise, <c>false</c>.</value>
         public bool IsAdding { get; protected set; }
-
     }
 }

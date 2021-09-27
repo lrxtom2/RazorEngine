@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.InvokeExt
 {
@@ -51,7 +48,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.InvokeExt
         /// <returns></returns>
         public static InvokeContext WithStaticContext(this Type target, object context = null)
         {
-
             return new InvokeContext(target, true, context);
         }
 
@@ -76,6 +72,5 @@ namespace RazorEngine.Compilation.ImpromptuInterface.InvokeExt
         {
             return new InvokeArg(name, argument);
         }
-
     }
 }

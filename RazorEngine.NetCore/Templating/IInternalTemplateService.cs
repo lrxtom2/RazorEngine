@@ -1,10 +1,6 @@
 ﻿using RazorEngine.Configuration;
 using RazorEngine.Text;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -42,7 +38,7 @@ namespace RazorEngine.Templating
 
         /// <summary>
         /// Creates a new <see cref="ExecuteContext"/> used to tracking templates.
-        /// </summary> 
+        /// </summary>
         /// <returns>The instance of <see cref="ExecuteContext"/></returns>
         ExecuteContext CreateExecuteContext();
     }

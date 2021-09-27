@@ -6,10 +6,13 @@
     public class RawString : IEncodedString
     {
         #region Fields
+
         private readonly string _value;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="RawString"/>
         /// </summary>
@@ -18,9 +21,11 @@
         {
             _value = value;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         /// <summary>
         /// Gets the encoded string.
         /// </summary>
@@ -38,6 +43,7 @@
         {
             return ToEncodedString();
         }
-        #endregion
+
+        #endregion Methods
     }
 }

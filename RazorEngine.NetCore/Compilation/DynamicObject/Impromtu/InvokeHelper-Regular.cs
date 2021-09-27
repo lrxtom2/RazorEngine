@@ -1,27 +1,22 @@
-﻿using System;
+﻿using Microsoft.CSharp.RuntimeBinder;
+using RazorEngine.Compilation.ImpromptuInterface.Build;
+using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using RazorEngine.Compilation.ImpromptuInterface.Build;
-using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
-using RazorEngine.Compilation.ImpromptuInterface.Internal;
-using Microsoft.CSharp.RuntimeBinder;
 using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 {
-
     internal class DummmyNull
     {
-
     }
 
     internal static partial class InvokeHelper
     {
-
-
         private static readonly IDictionary<BinderHash, CallSite> _unknownBinderCache = new Dictionary<BinderHash, CallSite>(20);
         private static readonly IDictionary<BinderHash, CallSite> _getBinderCache = new Dictionary<BinderHash, CallSite>(20);
         private static readonly IDictionary<BinderHash, CallSite> _setBinderCache = new Dictionary<BinderHash, CallSite>(20);
@@ -57,9 +52,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
                 case KnownConstructor:
                     return _constructorBinderCache.TryGetValue(hash, out callSite);
-
             }
-
         }
 
         private static void SetDynamicCachedCallSite(BinderHash hash, int knownBinderType, CallSite callSite)
@@ -69,18 +62,23 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 default:
                     _unknownBinderCache[hash] = callSite;
                     break;
+
                 case KnownGet:
                     _getBinderCache[hash] = callSite;
                     break;
+
                 case KnownSet:
                     _setBinderCache[hash] = callSite;
                     break;
+
                 case KnownMember:
                     _memberBinderCache[hash] = callSite;
                     break;
+
                 case KnownDirect:
                     _directBinderCache[hash] = callSite;
                     break;
+
                 case KnownConstructor:
                     _constructorBinderCache[hash] = callSite;
                     break;
@@ -93,8 +91,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
         /// LazyBinderType
         /// </summary>
         internal delegate CallSiteBinder LazyBinder();
-
-
 
         public static bool IsActionOrFunc(object target)
         {
@@ -109,7 +105,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
             return FuncArgs.ContainsKey(tType) || ActionArgs.ContainsKey(tType);
         }
-
 
         internal static object InvokeMethodDelegate(this object target, Delegate tFunc, object[] args)
         {
@@ -132,20 +127,13 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             return result;
         }
 
-
-
-
-
         internal static IEnumerable<CSharpArgumentInfo> GetBindingArgumentList(object[] args, string[] argNames, bool staticContext)
         {
-
             var tTargetFlag = CSharpArgumentInfoFlags.None;
             if (staticContext)
             {
                 tTargetFlag |= CSharpArgumentInfoFlags.IsStaticType | CSharpArgumentInfoFlags.UseCompileTimeType;
             }
-
-
 
             var tList = new BareBonesList<CSharpArgumentInfo>(args.Length + 1)
                         {
@@ -165,7 +153,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 if (!String.IsNullOrEmpty(tName))
                 {
                     tFlag |= CSharpArgumentInfoFlags.NamedArgument;
-
                 }
                 tList.Add(CSharpArgumentInfo.Create(
                     tFlag, tName));
@@ -175,7 +162,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
             return tList;
         }
-
 
         internal static CallSite CreateCallSite(
             Type delegateType,
@@ -190,7 +176,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
             )
         {
-
             var tHash = BinderHash.Create(delegateType, name, context, argNames, specificBinderType, staticContext, isEvent, knownType != Unknown);
             lock (_binderCacheLock)
             {
@@ -203,7 +188,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 return tOut;
             }
         }
-
 
         internal static CallSite<T> CreateCallSite<T>(
         Type specificBinderType,
@@ -229,7 +213,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 return (CallSite<T>)tOut;
             }
         }
-
 
         internal delegate object DynamicInvokeMemberConstructorValueType(
             CallSite funcSite,
@@ -287,7 +270,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             return tSite.Target(tSite, typeof(InvokeHelper), ref callsite, binderType, knownType, binder, name, staticContext, context, argNames, target, args);
         }
 
-
         internal static TReturn InvokeMember<TReturn>(ref CallSite callsite, Type binderType, int knownType, LazyBinder binder,
                                        String_OR_InvokeMemberName name,
                                      bool staticContext,
@@ -328,7 +310,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 }
                 else
                 {
-
                     tBinder = () => Binder.GetMember(CSharpBinderFlags.None, name,
                                                       context,
                                                       new List<CSharpArgumentInfo>
@@ -340,13 +321,11 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                     tKnownType = KnownGet;
                 }
 
-
                 callsite = CreateCallSite<Func<CallSite, object, object>>(tBinderType, tKnownType, tBinder, name, context,
                                 staticContext: staticContext);
             }
             var tCallSite = (CallSite<Func<CallSite, object, object>>)callsite;
             return tCallSite.Target(tCallSite, target);
-
         }
 
         internal static object InvokeSetCallSite(object target, string name, object value, Type context, bool staticContext, ref CallSite callSite)
@@ -357,7 +336,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 Type tBinderType;
                 if (staticContext) //CSharp Binder won't call Static properties, grrr.
                 {
-
                     tBinder = () =>
                     {
                         var tStaticFlag = CSharpBinderFlags.ResultDiscarded;
@@ -385,7 +363,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 }
                 else
                 {
-
                     tBinder = () => Binder.SetMember(CSharpBinderFlags.None, name,
                                                context,
                                                new List<CSharpArgumentInfo>
@@ -397,9 +374,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                                                            CSharpArgumentInfoFlags.None
 
                                                            , null)
-
                                                    });
-
 
                     tBinderType = typeof(SetMemberBinder);
                     callSite = CreateCallSite<Func<CallSite, object, object, object>>(tBinderType, KnownSet, tBinder, name, context, staticContext: false);
@@ -426,7 +401,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             Type tBinderType = null;
             if (callSite == null)
             {
-
                 tBinder = () =>
                 {
                     var tList = GetBindingArgumentList(args, tArgNames, tStaticContext);
@@ -441,7 +415,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 tBinderType = typeof(InvokeMemberBinder);
             }
 
-
             return InvokeMember<object>(ref callSite, tBinderType, KnownMember, tBinder, name, tStaticContext, tContext, tArgNames, target, args);
         }
 
@@ -452,7 +425,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
             if (callSite == null)
             {
-
                 tBinder = () =>
                 {
                     var tList = GetBindingArgumentList(args, tArgNames, tStaticContext);
@@ -461,7 +433,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 };
                 tBinderType = typeof(InvokeBinder);
             }
-
 
             return InvokeMember<object>(ref callSite, tBinderType, KnownDirect, tBinder, String.Empty, tStaticContext, tContext, tArgNames, target, args);
         }
@@ -472,7 +443,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             Type tBinderType = null;
             if (callSite == null)
             {
-
                 tBinder = () =>
                 {
                     var tList = GetBindingArgumentList(indexes, argNames,
@@ -480,7 +450,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                     return Binder.GetIndex(CSharpBinderFlags.None, context, tList);
                 };
                 tBinderType = typeof(GetIndexBinder);
-
             }
 
             return InvokeMember<object>(ref callSite, tBinderType, Unknown, tBinder, Invocation.IndexBinderName, tStaticContext, context, argNames, target, indexes);
@@ -492,7 +461,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             Type tBinderType = null;
             if (tCallSite == null)
             {
-
                 tBinder = () =>
                 {
                     var tList = GetBindingArgumentList(indexesThenValue, tArgNames,
@@ -512,7 +480,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             Type tBinderType = null;
             if (callSite == null)
             {
-
                 tBinder = () =>
                 {
                     IEnumerable<CSharpArgumentInfo> tList;
@@ -530,10 +497,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                 tBinderType = typeof(InvokeMemberBinder);
             }
 
-
             InvokeMemberAction(ref callSite, tBinderType, KnownMember, tBinder, name, tStaticContext, tContext, tArgNames, target, args);
         }
-
 
         internal static void InvokeDirectActionCallSite(object target, object[] args, string[] tArgNames, Type tContext, bool tStaticContext, ref CallSite callSite)
         {
@@ -542,7 +507,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
             if (callSite == null)
             {
-
                 tBinder = () =>
                 {
                     IEnumerable<CSharpArgumentInfo> tList;
@@ -550,20 +514,18 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
                     var tFlag = CSharpBinderFlags.ResultDiscarded;
 
-
                     return Binder.Invoke(tFlag, tContext, tList);
                 };
                 tBinderType = typeof(InvokeBinder);
             }
-
 
             InvokeMemberAction(ref callSite, tBinderType, KnownDirect, tBinder, String.Empty, tStaticContext, tContext, tArgNames, target, args);
         }
 
         internal class IsEventBinderDummy
         {
-
         }
+
         internal static bool InvokeIsEventCallSite(object target, string name, Type tContext, ref CallSite callSite)
         {
             if (callSite == null)
@@ -579,7 +541,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
         internal static void InvokeAddAssignCallSite(object target, string name, object[] args, string[] argNames, Type context, bool staticContext, ref CallSite callSiteIsEvent, ref CallSite callSiteAdd, ref CallSite callSiteGet, ref CallSite callSiteSet)
         {
-
             if (InvokeIsEventCallSite(target, name, context, ref callSiteIsEvent))
             {
                 InvokeMemberActionCallSite(target, InvokeMemberName.CreateSpecialName("add_" + name), args, argNames, context, staticContext, ref callSiteAdd);
@@ -607,6 +568,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
         }
 
         public delegate void DynamicAction(params object[] args);
+
         public delegate TReturn DynamicFunc<out TReturn>(params object[] args);
 
         internal static object InvokeConvertCallSite(object target, bool explict, Type type, Type context, ref CallSite callSite)
@@ -623,7 +585,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 
                 var tFunc = BuildProxy.GenerateCallSiteFuncType(new Type[] { }, type);
 
-
                 callSite = CreateCallSite(tFunc, tBinderType, Unknown, tBinder,
                                           explict
                                               ? Invocation.ExplicitConvertBinderName
@@ -631,7 +592,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             }
             dynamic tDynCallSite = callSite;
             return tDynCallSite.Target(callSite, target);
-
         }
 
         internal class InvokeConstructorDummy { };
@@ -647,14 +607,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                     return Activator.CreateInstance(type);
                 }
 
-
                 tBinder = () =>
                 {
                     var tList = GetBindingArgumentList(args, argNames, true);
                     return Binder.InvokeConstructor(CSharpBinderFlags.None, type, tList);
                 };
             }
-
 
             if (isValueType || Util.IsMono)
             {
@@ -681,7 +639,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             CallSite<DynamicInvokeWrapFunc> tSite;
             if (!_dynamicInvokeWrapFunc.TryGetValue(returnType, out tSite))
             {
-
                 var tMethod = "WrapFuncHelperMono";
 
 #if !__MonoCS__

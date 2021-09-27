@@ -1,12 +1,11 @@
 ﻿namespace RazorEngine.Compilation
 {
+    using Microsoft.CSharp.RuntimeBinder;
     using RazorEngine.Compilation.ImpromptuInterface;
     using RazorEngine.Compilation.ImpromptuInterface.Dynamic;
     using RazorEngine.Compilation.ImpromptuInterface.Optimization;
-    using Microsoft.CSharp.RuntimeBinder;
     using System;
-    using System.Collections;
-    using System.Diagnostics;
+    using System.Collections.Generic;
     using System.Dynamic;
     using System.Linq;
     using System.Linq.Expressions;
@@ -14,7 +13,6 @@
     using System.Runtime.Serialization;
     using System.Security;
     using System.Security.Permissions;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Wraps a dynamic object for serialization of dynamic objects and anonymous type support.
@@ -52,7 +50,7 @@
             }
 
             /// <summary>
-            /// Tries to find a member with the given name, the given arguments 
+            /// Tries to find a member with the given name, the given arguments
             /// and the given parameter types and invokes that member.
             /// </summary>
             /// <param name="typeToSearch">the type we search for that member.</param>
@@ -98,7 +96,7 @@
             }
 
             /// <summary>
-            /// Unwrap the currently wrapped object 
+            /// Unwrap the currently wrapped object
             /// (note that this can cause crossing an app-domain boundary).
             /// </summary>
             /// <returns></returns>
@@ -142,7 +140,7 @@
                 }
                 catch (RuntimeBinderException)
                 {
-                    // DLR doesn't like some kind of functions, 
+                    // DLR doesn't like some kind of functions,
                     // expecially because we have casted the component to object...
                     bool found = false;
                     switch (invocation.Kind)
@@ -198,6 +196,7 @@
                                 }
                             }
                             break;
+
                         default:
                             break;
                     }
@@ -220,7 +219,9 @@
                     return RazorDynamicObject.Create(result, _disposables.Add, _allowMissing);
                 }
             }
+
 #if NO_APPDOMAIN
+
             /// <summary>
             /// Disposes the current instance.
             /// </summary>
@@ -248,12 +249,11 @@
         private static BindingFlags Flags =
             BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.DeclaredOnly;
 
-
         private MarshalWrapper _component;
         private bool _disposed;
 
         internal RazorDynamicObject(object wrapped, bool allowMissingMembers = false)
-            : base ()
+            : base()
         {
             _component = new MarshalWrapper(wrapped, allowMissingMembers);
         }
@@ -312,7 +312,7 @@
         }
 
         /// <summary>
-        /// Convert the given interface type instance in another interface 
+        /// Convert the given interface type instance in another interface
         /// type instance which is free of anonymous types.
         /// </summary>
         /// <param name="interface"></param>
@@ -327,7 +327,7 @@
             var args = @interface.GetGenericArguments().Select(MapType).ToArray();
             return genericType.MakeGenericType(args);
         }
-        
+
         /// <summary>
         /// Check if an instance is already wrapped with <see cref="RazorDynamicObject"/>.
         /// </summary>
@@ -370,8 +370,8 @@
 
         /// <summary>
         /// Create a wrapper around an dynamic object.
-        /// This wrapper ensures that we can cross the <see cref="AppDomain"/>, 
-        /// call internal methods (to make Anonymous types work), 
+        /// This wrapper ensures that we can cross the <see cref="AppDomain"/>,
+        /// call internal methods (to make Anonymous types work),
         /// or call missing methods (when allowMissingMembers is true).
         /// </summary>
         /// <param name="wrapped">The object to wrap.</param>
@@ -541,7 +541,7 @@
                         if (IsWrapped(tempResult))
                         {
                             // Maybe we need to unwrap here.
-                            result = Unwrap(tempResult); 
+                            result = Unwrap(tempResult);
                         }
                         else
                         {
@@ -574,7 +574,7 @@
         /// <returns></returns>
         public override bool TryBinaryOperation(BinaryOperationBinder binder, object arg, out object result)
         {
-            return RemoteInvoke(new Invocation(InvocationKind.NotSet, "_BinaryOperator", new [] {binder.Operation, arg}), out result);
+            return RemoteInvoke(new Invocation(InvocationKind.NotSet, "_BinaryOperator", new[] { binder.Operation, arg }), out result);
         }
 
         /// <summary>
@@ -599,6 +599,7 @@
         {
             return RemoteInvoke(new Invocation(InvocationKind.InvokeMemberUnknown, binder.Name, Util.NameArgsIfNecessary(binder.CallInfo, args)), out result);
         }
+
         /// <summary>
         /// Tries the index of the get.
         /// </summary>
@@ -610,6 +611,7 @@
         {
             return RemoteInvoke(new Invocation(InvocationKind.GetIndex, Invocation.IndexBinderName, Util.NameArgsIfNecessary(binder.CallInfo, indexes)), out result);
         }
+
         /// <summary>
         /// Tries the index of the set.
         /// </summary>
@@ -623,7 +625,7 @@
             var tCombinedArgs = indexes.Concat(new[] { value }).ToArray();
             return RemoteInvoke(new Invocation(InvocationKind.GetIndex, Invocation.IndexBinderName, Util.NameArgsIfNecessary(binder.CallInfo, tCombinedArgs)), out outTemp);
         }
-        
+
         /// <summary>
         /// Override ToString and remotely invoke our wrapped instance.
         /// </summary>
@@ -632,12 +634,11 @@
         {
             object result;
             RemoteInvoke(
-                new Invocation(InvocationKind.InvokeMemberUnknown, "ToString", new object[]{}), 
+                new Invocation(InvocationKind.InvokeMemberUnknown, "ToString", new object[] { }),
                 out result);
             return (string)result;
         }
 
-        
         /// <summary>
         /// Cleans up the <see cref="RazorDynamicObject"/> instance.
         /// </summary>
@@ -670,6 +671,5 @@
             }
             _disposed = true;
         }
-
     }
 }

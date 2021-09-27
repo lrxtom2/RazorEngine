@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -20,6 +16,7 @@ namespace RazorEngine.Templating
         private static readonly bool isUnix =
             Environment.OSVersion.Platform == PlatformID.Unix ||
             Environment.OSVersion.Platform == PlatformID.MacOSX;
+
         private static string NormalizePath(string p)
         {
             var full = Path.GetFullPath(p).TrimEnd(Path.AltDirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
@@ -41,19 +38,19 @@ namespace RazorEngine.Templating
         /// <param name="resolveType"></param>
         /// <param name="context"></param>
         public FullPathTemplateKey(string name, string fullPath, ResolveType resolveType, ITemplateKey context)
-            : base(name, resolveType, context) 
+            : base(name, resolveType, context)
         {
             this.fullPath = NormalizePath(fullPath);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string FullPath
         {
             get { return fullPath; }
         }
-        
+
         /// <summary>
         /// Returns the name.
         /// </summary>

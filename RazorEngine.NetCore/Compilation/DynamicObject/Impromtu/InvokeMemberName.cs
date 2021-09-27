@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace RazorEngine.Compilation.ImpromptuInterface
 {
-
-
     /// <summary>
     /// String or InvokeMemberName
     /// </summary>
@@ -23,12 +19,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             return new InvokeMemberName(name, null);
         }
 
-
         /// <summary>
         /// Gets the name.
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; protected set; }
+
         /// <summary>
         /// Gets the generic args.
         /// </summary>
@@ -72,7 +68,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
             return new InvokeMemberName(name, null);
         }
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="InvokeMemberName"/> class.
         /// </summary>
@@ -115,10 +110,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// <returns></returns>
         private bool EqualsHelper(InvokeMemberName other)
         {
-
             var tGenArgs = GenericArgs;
             var tOtherGenArgs = other.GenericArgs;
-
 
             return Equals(other.Name, Name)
                 && !(other.IsSpecialName ^ IsSpecialName)
@@ -149,7 +142,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public override int GetHashCode()
         {

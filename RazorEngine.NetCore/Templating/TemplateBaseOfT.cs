@@ -1,10 +1,8 @@
 ﻿namespace RazorEngine.Templating
 {
-    using System.Dynamic;
-
     using Compilation;
     using System;
-    using System.Security;
+    using System.Dynamic;
 
     /// <summary>
     /// Provides a base implementation of a template with a model.
@@ -17,7 +15,7 @@
         private object currentModel;
         private bool _needReplaceNullModel = false;
 
-        #endregion
+        #endregion Fields
 
         #region Constructor
 
@@ -27,17 +25,17 @@
         protected TemplateBase()
         {
             if (typeof(T) == typeof(object) &&
-                GetType().IsDefined(typeof (HasDynamicModelAttribute), true))
+                GetType().IsDefined(typeof(HasDynamicModelAttribute), true))
             {
-                // It is possible that we think that we have a dynamic model 
-                // (because null was given and the attribute is in place), 
+                // It is possible that we think that we have a dynamic model
+                // (because null was given and the attribute is in place),
                 // but the template contains the @model directive and
                 // therefore we have a static typed template.
                 HasDynamicModel = true;
             }
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Properties
 
@@ -63,9 +61,10 @@
             set { currentModel = value; }
         }
 
-        #endregion
+        #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Set the model.
         /// </summary>
@@ -82,9 +81,10 @@
         /// <param name="model">The model or NULL if there is no model for the template.</param>
         /// <returns>The template writer helper.</returns>
 #pragma warning disable 1573
+
         // ReSharper disable OptionalParameterHierarchyMismatch
         public override TemplateWriter Include(string name, object model, Type modelType)
-            // ReSharper restore OptionalParameterHierarchyMismatch
+        // ReSharper restore OptionalParameterHierarchyMismatch
 #pragma warning restore 1573
         {
             model = _needReplaceNullModel && model == null ? Model : model;
@@ -121,7 +121,6 @@
             }
         }
 
-
         /// <summary>
         /// Resolves the layout template.
         /// </summary>
@@ -131,6 +130,7 @@
         {
             return InternalTemplateService.Resolve(name, (T)currentModel, ModelType, (DynamicViewBag)ViewBag, ResolveType.Layout);
         }
-        #endregion
+
+        #endregion Methods
     }
 }

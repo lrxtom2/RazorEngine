@@ -1,34 +1,29 @@
-﻿
-// 
+﻿//
 //  Copyright 2011 Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+using RazorEngine.Compilation.ImpromptuInterface.Build;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using RazorEngine.Compilation.ImpromptuInterface.Build;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 {
-
-
     internal static partial class InvokeHelper
     {
-
-
         internal static readonly Type[] FuncKinds;
         internal static readonly Type[] ActionKinds;
         internal static readonly IDictionary<Type, int> FuncArgs;
@@ -38,7 +33,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
         {
             FuncKinds = new[]
                             {
-								typeof(Func<>), //0
+                                typeof(Func<>), //0
 								typeof(Func<,>), //1
 								typeof(Func<,,>), //2
 								typeof(Func<,,,>), //3
@@ -78,14 +73,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
 								typeof(Action<,,,,,,,,,,,,,,,>), //16
                             };
 
-
             FuncArgs = FuncKinds.Zip(Enumerable.Range(0, FuncKinds.Length), (key, value) => new { key, value }).ToDictionary(k => k.key, v => v.value);
             ActionArgs = ActionKinds.Zip(Enumerable.Range(0, ActionKinds.Length), (key, value) => new { key, value }).ToDictionary(k => k.key, v => v.value);
-
         }
-
-
-
 
         internal static void InvokeMemberAction(ref CallSite callsite,
                                                     Type binderType,
@@ -98,11 +88,11 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                                                     object target,
                                                     params object[] args)
         {
-
             var tSwitch = args.Length;
             switch (tSwitch)
             {
                 #region Optimizations
+
                 case 0:
                     {
                         var tCallSite = (CallSite<Action<CallSite, object>>)callsite;
@@ -268,24 +258,16 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                         tCallSite.Target(tCallSite, target, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
                         break;
                     }
-                #endregion
+
+                #endregion Optimizations
+
                 default:
                     var tArgTypes = Enumerable.Repeat(typeof(object), tSwitch);
                     var tDelagateType = BuildProxy.GenerateCallSiteFuncType(tArgTypes, typeof(void));
                     Impromptu.InvokeCallSite(CreateCallSite(tDelagateType, binderType, knownType, binder, name, context, argNames), target, args);
                     break;
-
             }
         }
-
-
-
-
-
-
-
-
-
 
         internal static TReturn InvokeMemberTargetType<TTarget, TReturn>(
                                         ref CallSite callsite,
@@ -298,14 +280,12 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                                      string[] argNames,
                                      TTarget target, params object[] args)
         {
-
-
-
             var tSwitch = args.Length;
 
             switch (tSwitch)
             {
                 #region Optimizations
+
                 case 0:
                     {
                         var tCallSite = (CallSite<Func<CallSite, TTarget, TReturn>>)callsite;
@@ -456,65 +436,82 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                         }
                         return tCallSite.Target(tCallSite, target, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
                     }
-                #endregion
+
+                #endregion Optimizations
+
                 default:
                     var tArgTypes = Enumerable.Repeat(typeof(object), tSwitch);
                     var tDelagateType = BuildProxy.GenerateCallSiteFuncType(tArgTypes, typeof(TTarget));
                     return Impromptu.InvokeCallSite(CreateCallSite(tDelagateType, binderType, knownType, binder, name, context, argNames), target, args);
-
             }
         }
 
-
-
-
-
-
 #if !__MonoCS__
+
         internal static Delegate WrapFuncHelper<TReturn>(dynamic invokable, int length)
         {
             switch (length)
             {
                 #region Optimizations
+
                 case 0:
                     return new Func<TReturn>(() => invokable());
+
                 case 1:
                     return new Func<object, TReturn>((a1) => invokable(a1));
+
                 case 2:
                     return new Func<object, object, TReturn>((a1, a2) => invokable(a1, a2));
+
                 case 3:
                     return new Func<object, object, object, TReturn>((a1, a2, a3) => invokable(a1, a2, a3));
+
                 case 4:
                     return new Func<object, object, object, object, TReturn>((a1, a2, a3, a4) => invokable(a1, a2, a3, a4));
+
                 case 5:
                     return new Func<object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5) => invokable(a1, a2, a3, a4, a5));
+
                 case 6:
                     return new Func<object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6) => invokable(a1, a2, a3, a4, a5, a6));
+
                 case 7:
                     return new Func<object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7) => invokable(a1, a2, a3, a4, a5, a6, a7));
+
                 case 8:
                     return new Func<object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8) => invokable(a1, a2, a3, a4, a5, a6, a7, a8));
+
                 case 9:
                     return new Func<object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9));
+
                 case 10:
                     return new Func<object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10));
+
                 case 11:
                     return new Func<object, object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11));
+
                 case 12:
                     return new Func<object, object, object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12));
+
                 case 13:
                     return new Func<object, object, object, object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+
                 case 14:
                     return new Func<object, object, object, object, object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+
                 case 15:
                     return new Func<object, object, object, object, object, object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+
                 case 16:
                     return new Func<object, object, object, object, object, object, object, object, object, object, object, object, object, object, object, object, TReturn>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
-                #endregion
+
+                #endregion Optimizations
+
                 default:
                     return new DynamicFunc<TReturn>(args => (TReturn)Impromptu.Invoke((object)invokable, args));
             }
         }
+
 #endif
 
         internal static class MonoConvertCallSite<T>
@@ -527,6 +524,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             switch (length)
             {
                 #region Optimizations
+
                 case 0:
                     return new Func<TReturn>(() =>
                     {
@@ -629,7 +627,9 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                         object tResult = invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16);
                         return (TReturn)InvokeConvertCallSite(tResult, true, typeof(TReturn), typeof(object), ref MonoConvertCallSite<TReturn>.CallSite);
                     });
-                #endregion
+
+                #endregion Optimizations
+
                 default:
                     return new DynamicFunc<TReturn>(args =>
                     {
@@ -639,52 +639,69 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
             }
         }
 
-
         internal static Delegate WrapAction(dynamic invokable, int length)
         {
             switch (length)
             {
                 #region Optimizations
+
                 case 0:
                     return new Action(() => invokable());
+
                 case 1:
                     return new Action<object>((a1) => invokable(a1));
+
                 case 2:
                     return new Action<object, object>((a1, a2) => invokable(a1, a2));
+
                 case 3:
                     return new Action<object, object, object>((a1, a2, a3) => invokable(a1, a2, a3));
+
                 case 4:
                     return new Action<object, object, object, object>((a1, a2, a3, a4) => invokable(a1, a2, a3, a4));
+
                 case 5:
                     return new Action<object, object, object, object, object>((a1, a2, a3, a4, a5) => invokable(a1, a2, a3, a4, a5));
+
                 case 6:
                     return new Action<object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6) => invokable(a1, a2, a3, a4, a5, a6));
+
                 case 7:
                     return new Action<object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7) => invokable(a1, a2, a3, a4, a5, a6, a7));
+
                 case 8:
                     return new Action<object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8) => invokable(a1, a2, a3, a4, a5, a6, a7, a8));
+
                 case 9:
                     return new Action<object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9));
+
                 case 10:
                     return new Action<object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10));
+
                 case 11:
                     return new Action<object, object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11));
+
                 case 12:
                     return new Action<object, object, object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12));
+
                 case 13:
                     return new Action<object, object, object, object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13));
+
                 case 14:
                     return new Action<object, object, object, object, object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14));
+
                 case 15:
                     return new Action<object, object, object, object, object, object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15));
+
                 case 16:
                     return new Action<object, object, object, object, object, object, object, object, object, object, object, object, object, object, object, object>((a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16) => invokable(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16));
-                #endregion
+
+                #endregion Optimizations
+
                 default:
                     return new DynamicAction(args => Impromptu.InvokeAction((object)invokable, args));
             }
         }
-
 
         internal static object FastDynamicInvokeReturn(Delegate del, dynamic[] args)
         {
@@ -700,40 +717,58 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                     {
                         throw ex.InnerException;
                     }
+
                 #region Optimization
+
                 case 1:
                     return tDel(args[0]);
+
                 case 2:
                     return tDel(args[0], args[1]);
+
                 case 3:
                     return tDel(args[0], args[1], args[2]);
+
                 case 4:
                     return tDel(args[0], args[1], args[2], args[3]);
+
                 case 5:
                     return tDel(args[0], args[1], args[2], args[3], args[4]);
+
                 case 6:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5]);
+
                 case 7:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+
                 case 8:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+
                 case 9:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
+
                 case 10:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+
                 case 11:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]);
+
                 case 12:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
+
                 case 13:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12]);
+
                 case 14:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
+
                 case 15:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14]);
+
                 case 16:
                     return tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
-                #endregion
+
+                    #endregion Optimization
             }
         }
 
@@ -752,56 +787,74 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Optimization
                         throw ex.InnerException;
                     }
                     return;
+
                 #region Optimization
+
                 case 1:
                     tDel(args[0]);
                     return;
+
                 case 2:
                     tDel(args[0], args[1]);
                     return;
+
                 case 3:
                     tDel(args[0], args[1], args[2]);
                     return;
+
                 case 4:
                     tDel(args[0], args[1], args[2], args[3]);
                     return;
+
                 case 5:
                     tDel(args[0], args[1], args[2], args[3], args[4]);
                     return;
+
                 case 6:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5]);
                     return;
+
                 case 7:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
                     return;
+
                 case 8:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
                     return;
+
                 case 9:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
                     return;
+
                 case 10:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
                     return;
+
                 case 11:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10]);
                     return;
+
                 case 12:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11]);
                     return;
+
                 case 13:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12]);
                     return;
+
                 case 14:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13]);
                     return;
+
                 case 15:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14]);
                     return;
+
                 case 16:
                     tDel(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
                     return;
-                #endregion
+
+                    #endregion Optimization
             }
         }
     }

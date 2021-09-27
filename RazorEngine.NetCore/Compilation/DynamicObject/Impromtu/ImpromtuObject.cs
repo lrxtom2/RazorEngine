@@ -1,30 +1,32 @@
-﻿// 
+﻿//
 //  Copyright 2010  Ekon Benefits
-// 
+//
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
-// 
+//
 //        http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
+using RazorEngine.Compilation.ImpromptuInterface.Build;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.Serialization;
-using RazorEngine.Compilation.ImpromptuInterface.Build;
+
 //using RazorEngine.Compilation.ImpromptuInterface.Internal.Support;
-using System.Reflection;
 using System.Security;
+
 namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
 {
-    interface ICustomTypeProvider { }
+    internal interface ICustomTypeProvider
+    { }
 
     /// <summary>
     /// Dynamic Object that knows about the Impromtu Interface return types;
@@ -32,7 +34,7 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
     /// </summary>
 
     [Serializable]
-    public abstract class ImpromptuObject : DynamicObject, IDynamicKnowLike, 
+    public abstract class ImpromptuObject : DynamicObject, IDynamicKnowLike,
         IActLike, ISerializable, ICustomTypeProvider
     {
         /// <summary>
@@ -40,8 +42,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         /// </summary>
         protected ImpromptuObject()
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ImpromptuObject"/> class. when deserializing
         /// </summary>
@@ -50,7 +52,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         protected ImpromptuObject(SerializationInfo info,
            StreamingContext context)
         {
-
         }
 
         /// <summary>
@@ -62,7 +63,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         [SecurityCritical]
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         protected static readonly IDictionary<TypeHash, IDictionary<string, Type>> _returnTypHash =
         new Dictionary<TypeHash, IDictionary<string, Type>>();
 
-
         private static readonly object TypeHashLock = new object();
+
         /// <summary>
         /// Hash for this instance to lookup cached values from <see cref="_returnTypHash"/>
         /// </summary>
@@ -83,12 +83,11 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
         /// </summary>
         protected IDictionary<string, Type> PropertySpec;
 
-
         IEnumerable<Type> IDynamicKnowLike.KnownInterfaces
         {
             set { KnownInterfaces = value; }
         }
-        
+
         /// <summary>
         /// Gets or sets the known interfaces.
         /// Set should only be called be the factory methood
@@ -134,7 +133,8 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
 
                     var tDict = tPropReturType.Concat(tMethodReturnType)
                         .GroupBy(info => info.Name)
-                        .Select(group => {
+                        .Select(group =>
+                        {
                             // TODO: what if we have properties with same name and different types?
                             return group.First();
                         })
@@ -176,7 +176,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface.Dynamic
 
         private IDictionary<string, Type> HashForThisType()
         {
-
             if (PropertySpec != null)
                 return PropertySpec;
             IDictionary<string, Type> tOut;

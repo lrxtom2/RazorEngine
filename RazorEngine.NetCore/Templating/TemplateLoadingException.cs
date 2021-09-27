@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Templating
 {
@@ -18,6 +14,7 @@ namespace RazorEngine.Templating
         /// <param name="message">The message.</param>
         internal TemplateLoadingException(string message)
             : base(message) { }
+
         /// <summary>
         /// Initialises a new instance of <see cref="TemplateLoadingException"/>.
         /// </summary>

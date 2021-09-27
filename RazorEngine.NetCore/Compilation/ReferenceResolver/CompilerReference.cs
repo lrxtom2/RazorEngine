@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RazorEngine.Compilation.ReferenceResolver
 {
@@ -25,18 +22,21 @@ namespace RazorEngine.Compilation.ReferenceResolver
             /// <param name="assembly"></param>
             /// <returns></returns>
             T Visit(Assembly assembly);
+
             /// <summary>
             /// Handle a file reference.
             /// </summary>
             /// <param name="file"></param>
             /// <returns></returns>
             T Visit(string file);
+
             /// <summary>
             /// Handle a stream reference.
             /// </summary>
             /// <param name="stream"></param>
             /// <returns></returns>
             T Visit(Stream stream);
+
             /// <summary>
             /// Handle a byte array reference.
             /// </summary>
@@ -53,15 +53,18 @@ namespace RazorEngine.Compilation.ReferenceResolver
             /// <summary>
             /// Reference to a file
             /// </summary>
-            FileReference, 
+            FileReference,
+
             /// <summary>
             /// Reference to a assembly instace
             /// </summary>
             DirectAssemblyReference,
+
             /// <summary>
             /// Reference to a assembly stream.
             /// </summary>
-            StreamReference, 
+            StreamReference,
+
             /// <summary>
             /// Reference to a assembly within a byte array.
             /// </summary>
@@ -293,6 +296,7 @@ namespace RazorEngine.Compilation.ReferenceResolver
         private class SelectFileVisitor : CompilerReference.ICompilerReferenceVisitor<string>
         {
             private Func<string, Exception> exceptionCreator;
+
             public SelectFileVisitor(Func<string, Exception> exceptionCreator = null)
             {
                 this.exceptionCreator = exceptionCreator ?? ((msg) => new InvalidOperationException(msg));
@@ -333,6 +337,7 @@ namespace RazorEngine.Compilation.ReferenceResolver
             /// The referenced file.
             /// </summary>
             public string File { get; private set; }
+
             internal FileReference(string file)
                 : base(CompilerReferenceType.FileReference)
             {
@@ -360,6 +365,7 @@ namespace RazorEngine.Compilation.ReferenceResolver
             /// The referenced assembly.
             /// </summary>
             public Assembly Assembly { get; private set; }
+
             internal DirectAssemblyReference(Assembly assembly)
                 : base(CompilerReferenceType.DirectAssemblyReference)
             {
@@ -387,6 +393,7 @@ namespace RazorEngine.Compilation.ReferenceResolver
             /// The referenced stream.
             /// </summary>
             public Stream Stream { get; private set; }
+
             internal StreamReference(Stream stream)
                 : base(CompilerReferenceType.StreamReference)
             {
@@ -414,6 +421,7 @@ namespace RazorEngine.Compilation.ReferenceResolver
             /// The referenced byte array.
             /// </summary>
             public byte[] ByteArray { get; private set; }
+
             internal ByteArrayReference(byte[] byteArray)
                 : base(CompilerReferenceType.ByteArrayReference)
             {

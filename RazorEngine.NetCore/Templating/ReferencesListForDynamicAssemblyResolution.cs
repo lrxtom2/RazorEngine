@@ -1,8 +1,8 @@
-﻿using System;
+﻿using RazorEngine.Compilation.ReferenceResolver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using RazorEngine.Compilation.ReferenceResolver;
 
 namespace RazorEngine.Templating
 {
@@ -18,6 +18,7 @@ namespace RazorEngine.Templating
         /// All references we used until now.
         /// </summary>
         private readonly HashSet<CompilerReference> _references = new HashSet<CompilerReference>();
+
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
 
         /// <summary>

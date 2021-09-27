@@ -1,25 +1,14 @@
 ﻿namespace RazorEngine.Compilation
 {
+    using Microsoft.AspNetCore.Razor.Language;
+    using RazorEngine.Compilation.ReferenceResolver;
     using System;
-    using System.CodeDom;
     using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.IO;
     using System.Linq;
-#if RAZOR4
-    using Microsoft.AspNetCore.Razor;
-    using Microsoft.AspNetCore.Razor.Language;
-#else
-    using System.Web.Razor;
-    using System.Web.Razor.Generator;
-    using System.Web.Razor.Parser;
-    using System.CodeDom.Compiler;
-#endif
-
-    using Inspectors;
-    using Templating;
-    using RazorEngine.Compilation.ReferenceResolver;
     using System.Security;
+    using Templating;
 
     /// <summary>
     /// Provides a base implementation of a compiler service.
@@ -30,12 +19,14 @@
         /// The namespace for dynamic templates.
         /// </summary>
         protected internal const string DynamicTemplateNamespace = "CompiledRazorTemplates.Dynamic";
+
         /// <summary>
         /// A prefix for all dynamically created classes.
         /// </summary>
         protected internal const string ClassNamePrefix = "RazorEngine_";
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="CompilerServiceBase"/>
         /// </summary>
@@ -46,16 +37,10 @@
         {
             ReferenceResolver = new UseCurrentAssembliesReferenceResolver();
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Properties
-#if !RAZOR4
-        /// <summary>
-        /// Gets or sets the set of code inspectors.
-        /// </summary>
-        [Obsolete("This API is obsolete and will be removed in the next version (Razor4 doesn't use CodeDom for code-generation)!")]
-        public IEnumerable<ICodeInspector> CodeInspectors { get; set; }
-#endif
 
         /// <summary>
         /// Gets or sets the assembly resolver.
@@ -80,7 +65,7 @@
 
         private bool _disposed;
 
-        #endregion
+        #endregion Properties
 
         #region Methods
 
@@ -146,46 +131,6 @@
         /// <returns>The compiled type.</returns>
         [SecurityCritical]
         public abstract Tuple<Type, CompilationData> CompileType(TypeContext context);
-
-        /// <summary>
-        /// Creates a <see cref="RazorEngineHost"/> used for class generation.
-        /// </summary>
-        /// <param name="templateType">The template base type.</param>
-        /// <param name="modelType">The model type.</param>
-        /// <param name="className">The class name.</param>
-        /// <returns>An instance of <see cref="RazorEngineHost"/>.</returns>
-
-#if !RAZOR4
-        [SecurityCritical]
-        private RazorEngineHost CreateHost(Type templateType, Type modelType, string className)
-        {
-            var host =
-                new RazorEngineHost(CodeLanguage, MarkupParserFactory.Create)
-                {
-                    DefaultBaseTemplateType = templateType,
-                    DefaultModelType = modelType,
-                    DefaultBaseClass = BuildTypeName(templateType, modelType),
-                    DefaultClassName = className,
-                    DefaultNamespace = DynamicTemplateNamespace,
-                    GeneratedClassContext =
-                        new GeneratedClassContext(
-                            "Execute", "Write", "WriteLiteral", "WriteTo", "WriteLiteralTo",
-                            "RazorEngine.Templating.TemplateWriter", "DefineSection"
-#if RAZOR4
-                            , new GeneratedTagHelperContext()
-#endif
-                        )
-#if !RAZOR4
-                        {
-                            ResolveUrlMethodName = "ResolveUrl"
-                        }
-#endif
-                };
-
-            return host;
-        }
-#endif
-
 
         /// <summary>
         /// Gets the source code from Razor for the given template.
@@ -327,7 +272,6 @@
             }
         }
 
-
         private static RazorPageGeneratorResult GenerateCodeFile(RazorTemplateEngine templateEngine, RazorProjectItem projectItem)
         {
             var projectItemWrapper = new FileSystemRazorProjectItemWrapper(projectItem);
@@ -345,6 +289,7 @@
                 GeneratedCode = cSharpDocument.GeneratedCode,
             };
         }
+
         private static RazorPageGeneratorResult GenerateCodeFile(RazorTemplateEngine templateEngine, RazorCodeDocument document)
         {
             var cSharpDocument = templateEngine.GenerateCode(document);
@@ -379,16 +324,6 @@
         }
 
         /// <summary>
-        /// Returns a set of assemblies that must be referenced by the compiled template.
-        /// </summary>
-        /// <returns>The set of assemblies.</returns>
-        [Obsolete("Use IncludeReferences instead")]
-        public virtual IEnumerable<string> IncludeAssemblies()
-        {
-            return Enumerable.Empty<string>();
-        }
-
-        /// <summary>
         /// Returns a set of references that must be referenced by the compiled template.
         /// </summary>
         /// <returns>The set of references.</returns>
@@ -417,25 +352,6 @@
             return references;
         }
 
-#if !RAZOR4
-        /// <summary>
-        /// Inspects the generated code compile unit.
-        /// </summary>
-        /// <param name="unit">The code compile unit.</param>
-        [Obsolete("Will be removed in 4.x")]
-        protected virtual void Inspect(CodeCompileUnit unit)
-        {
-            Contract.Requires(unit != null);
-
-            var ns = unit.Namespaces[0];
-            var type = ns.Types[0];
-            var executeMethod = type.Members.OfType<CodeMemberMethod>().Where(m => m.Name.Equals("Execute")).Single();
-
-            foreach (var inspector in CodeInspectors)
-                inspector.Inspect(unit, ns, type, executeMethod);
-        }
-#endif
-
         /// <summary>
         /// Disposes the current instance.
         /// </summary>
@@ -459,7 +375,12 @@
             _disposed = true;
         }
 
-        #endregion
+        public IEnumerable<string> IncludeAssemblies()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion Methods
 
         //https://github.com/aspnet/Razor/blob/b70815e317298c3078fff7ed6e21fa9b5738949f/src/RazorPageGenerator/Program.cs
         private class SuppressChecksumOptionsFeature : RazorEngineFeatureBase, IConfigureRazorCodeGenerationOptionsFeature

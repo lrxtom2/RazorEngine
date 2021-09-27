@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security;
 using System.Security.Permissions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,10 +18,12 @@ namespace RazorEngine.Compilation
             public Func<TIn, TOut> toCall;
             public TIn inData;
             public TOut outData;
+
             public void AsAction()
             {
                 outData = toCall(inData);
             }
+
             public TOut AsFunc()
             {
                 AsAction();
@@ -36,10 +35,12 @@ namespace RazorEngine.Compilation
                 AsAction();
             }
         }
+
         [SecurityCritical]
         private class FuncConv<T>
         {
             public Func<T> toCall;
+
             public T Call(bool data)
             {
                 return toCall();
@@ -50,6 +51,7 @@ namespace RazorEngine.Compilation
         private class ActionConv
         {
             public Action toCall;
+
             public bool Call(bool data)
             {
                 toCall();
@@ -59,6 +61,7 @@ namespace RazorEngine.Compilation
 
         private System.Collections.Concurrent.ConcurrentQueue<Tuple<TaskCompletionSource<bool>, Action>> queue =
             new System.Collections.Concurrent.ConcurrentQueue<Tuple<TaskCompletionSource<bool>, Action>>();
+
         private Exception messagePumpExn;
         private Thread t;
 
@@ -132,6 +135,7 @@ namespace RazorEngine.Compilation
                 Thread.CurrentPrincipal = saved;
             }
         }
+
         [SecurityCritical]
         public void CallAction(Action work)
         {
@@ -167,7 +171,6 @@ namespace RazorEngine.Compilation
         {
             return new ExecutionContextLessThread();
         }
-
 
         //private static readonly Lazy<ExecutionContextLessThread> defaultThread = new Lazy<ExecutionContextLessThread>(Create);
         //public static ExecutionContextLessThread Default
@@ -232,8 +235,8 @@ namespace RazorEngine.Compilation
         }
     }
 
-    internal static class EmptyExecutionContext {
-        
+    internal static class EmptyExecutionContext
+    {
         private static ExecutionContext empty;
 
         [SecurityCritical]
@@ -244,7 +247,7 @@ namespace RazorEngine.Compilation
                 empty = t.CallFunc(ExecutionContext.Capture);
             }
         }
-        public static ExecutionContext Empty { get { return empty.CreateCopy(); } }
 
+        public static ExecutionContext Empty { get { return empty.CreateCopy(); } }
     }
 }

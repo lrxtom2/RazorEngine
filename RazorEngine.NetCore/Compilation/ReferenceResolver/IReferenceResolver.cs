@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace RazorEngine.Compilation.ReferenceResolver
 {
@@ -21,5 +15,4 @@ namespace RazorEngine.Compilation.ReferenceResolver
         /// <returns>the references which will be used in the compilation process.</returns>
         IEnumerable<CompilerReference> GetReferences(TypeContext context, IEnumerable<CompilerReference> includeAssemblies = null);
     }
-
 }

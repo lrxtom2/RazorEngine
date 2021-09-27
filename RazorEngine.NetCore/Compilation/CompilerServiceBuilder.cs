@@ -1,7 +1,6 @@
 ﻿namespace RazorEngine.Compilation
 {
     using System.Diagnostics.Contracts;
-    using Configuration;
 
     /// <summary>
     /// Manages creation of <see cref="ICompilerService"/> instances.
@@ -9,16 +8,15 @@
     public static class CompilerServiceBuilder
     {
         #region Fields
-        private static ICompilerServiceFactory _factory =
-#if RAZOR4
-            new Roslyn.RoslynCompilerServiceFactory();
-#else
-            new DefaultCompilerServiceFactory();
-#endif
+
+        private static ICompilerServiceFactory _factory = new Roslyn.RoslynCompilerServiceFactory();
+
         private static readonly object sync = new object();
-        #endregion
+
+        #endregion Fields
 
         #region Methods
+
         /// <summary>
         /// Sets the <see cref="ICompilerServiceFactory"/> used to create compiler service instances.
         /// </summary>
@@ -62,6 +60,7 @@
             return GetCompilerService(config.DefaultLanguage);
 #endif
         }
-        #endregion
+
+        #endregion Methods
     }
 }

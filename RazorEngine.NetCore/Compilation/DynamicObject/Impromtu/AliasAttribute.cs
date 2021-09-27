@@ -30,7 +30,6 @@ namespace RazorEngine.Compilation.ImpromptuInterface
         public string Name
         {
             get { return _name; }
-
         }
     }
 }

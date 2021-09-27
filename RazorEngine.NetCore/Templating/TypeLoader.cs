@@ -17,14 +17,17 @@
     public class TypeLoader : IDisposable
     {
         #region Fields
+
         private readonly AppDomain _appDomain;
         private readonly IEnumerable<Assembly> _assemblies;
         private readonly ConcurrentDictionary<Type, Func<ITemplate>> _constructors;
         private readonly ResolveEventHandler _resolveEventHandler;
         private bool disposed;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="TypeLoader"/>
         /// </summary>
@@ -43,9 +46,11 @@
 
             _appDomain.AssemblyResolve += _resolveEventHandler;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         /// <summary>
         /// Creates an instance of the specified type.
         /// </summary>
@@ -84,9 +89,9 @@
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
+
         /// <summary>
-        /// Gets the delegate used to create an instance of the template type. 
+        /// Gets the delegate used to create an instance of the template type.
         /// This method will consider the cached constructor delegate before creating an instance of one.
         /// </summary>
         /// <param name="type">The template type.</param>
@@ -125,6 +130,7 @@
                 .Where(a => a.FullName.Equals(name))
                 .FirstOrDefault();
         }
-        #endregion
+
+        #endregion Methods
     }
 }

@@ -6,11 +6,13 @@
     public interface IEncodedString
     {
         #region Methods
+
         /// <summary>
         /// Gets the encoded string.
         /// </summary>
         /// <returns>The encoded string.</returns>
         string ToEncodedString();
-        #endregion
+
+        #endregion Methods
     }
 }

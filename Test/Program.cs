@@ -1,12 +1,12 @@
-﻿using System;
-using RazorEngine;
+﻿using RazorEngine;
 using RazorEngine.Templating;
+using System;
 
 namespace Test
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             string template = "Hello @Model.Name, welcome to RazorEngine!";
             var result = Engine.Razor.RunCompile(template, "templateKey", null, new { Name = "World" });

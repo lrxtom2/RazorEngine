@@ -9,10 +9,13 @@
     internal class DelegateAppDomainFactory : IAppDomainFactory
     {
         #region Fields
+
         private readonly Func<AppDomain> _factory;
-        #endregion
+
+        #endregion Fields
 
         #region Constructor
+
         /// <summary>
         /// Initialises a new instance of <see cref="DelegateAppDomainFactory"/>.
         /// </summary>
@@ -23,9 +26,11 @@
 
             _factory = factory;
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Methods
+
         /// <summary>
         /// Creates the <see cref="AppDomain"/>.
         /// </summary>
@@ -34,6 +39,7 @@
         {
             return _factory();
         }
-        #endregion
+
+        #endregion Methods
     }
 }
